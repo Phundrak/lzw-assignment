@@ -128,54 +128,37 @@ const uvec compress(const ustring &text, dic_t &dictionary) {
  *  \param out Fichier de sortie
  *  \param c Caractères à écrire dans \p out
  */
-void write_char(FILE *out, uint32_t c) {
-  if (c < 128) {
+void write_utf8(FILE* out, uint32_t c) {
+  if(c < 128) {
     fwrite(&c, sizeof(unsigned char), 1, out);
-  } else if (c < 2048) {
-    auto temp = new unsigned char[2];
-    temp[0] = static_cast<unsigned char>((c >> 6) + 0xC0);   // 110xxxxx
-    temp[1] = static_cast<unsigned char>((c & 0x3F) + 0x80); // 10xxxxxx
-    fwrite(temp, sizeof(unsigned char), 2, out);
-    delete[] temp;
-  } else if (c < 65536) {
-    auto temp = new unsigned char[3];
-    temp[0] = static_cast<unsigned char>((c >> 12) + 0xE0);         // 1110xxxx
-    temp[1] = static_cast<unsigned char>(((c >> 6) & 0x3F) + 0x80); // 10xxxxxx
-    temp[2] = static_cast<unsigned char>((c & 0x3F) + 0x80);        // 10xxxxxx
-    fwrite(temp, sizeof(unsigned char), 3, out);
-    delete[] temp;
-  } else if (c < 2097152) {
-    auto temp = new unsigned char[4];
-    temp[0] = static_cast<unsigned char>((c >> 18) + 0xF0);          // 11110xxx
-    temp[1] = static_cast<unsigned char>(((c >> 12) & 0x3F) + 0x80); // 10xxxxxx
-    temp[2] = static_cast<unsigned char>(((c >> 6) & 0x3F) + 0x80);  // 10xxxxxx
-    temp[3] = static_cast<unsigned char>((c & 0x3F) + 0x80);         // 10xxxxxx
-    fwrite(temp, sizeof(unsigned char), 4, out);
-    delete[] temp;
-  } else if (c < 67108864) {
-    auto temp = new unsigned char[5];
-    temp[0] = static_cast<unsigned char>((c >> 24) + 0xF8);          // 111110xx
-    temp[1] = static_cast<unsigned char>(((c >> 18) & 0x3F) + 0x80); // 10xxxxxx
-    temp[2] = static_cast<unsigned char>(((c >> 12) & 0x3F) + 0x80); // 10xxxxxx
-    temp[3] = static_cast<unsigned char>(((c >> 6) & 0x3F) + 0x80);  // 10xxxxxx
-    temp[4] = static_cast<unsigned char>((c & 0x3F) + 0x80);         // 10xxxxxx
-    fwrite(temp, sizeof(unsigned char), 5, out);
-    delete[] temp;
-  } else if (c < 2147483648) {
-    auto temp = new unsigned char[6];
-    temp[0] = static_cast<unsigned char>((c >> 30) + 0xFC);          // 1111110x
-    temp[1] = static_cast<unsigned char>(((c >> 24) & 0x3F) + 0x80); // 10xxxxxx
-    temp[2] = static_cast<unsigned char>(((c >> 18) & 0x3F) + 0x80); // 10xxxxxx
-    temp[3] = static_cast<unsigned char>(((c >> 12) & 0x3F) + 0x80); // 10xxxxxx
-    temp[4] = static_cast<unsigned char>(((c >> 6) & 0x3F) + 0x80);  // 10xxxxxx
-    temp[5] = static_cast<unsigned char>((c & 0x3F) + 0x80);         // 10xxxxxx
-    fwrite(temp, sizeof(unsigned char), 6, out);
-    delete[] temp;
-  } else {
-    // erreur, nombre trop grand
-    perror("Character value too high, must fit in 31bits");
-    exit(1);
+    return;
   }
+  size_t loops = 0;
+  unsigned char header = 0;
+  if (c < 2048) {
+    loops = 1;
+    header = 0xC0;
+  } else if (c < 65536) {
+    loops = 2;
+    header = 0xE0;
+  } else if (c < 2097152) {
+    loops = 3;
+    header = 0xF0;
+  } else if (c < 67108864) {
+    loops = 4;
+    header = 0xF8;
+  } else {
+    loops = 5;
+    header = 0xFC;
+  }
+
+  ustring str(loops + 1, 0);
+  for (size_t i = 0; i <= loops; ++i) {
+    str[i] = static_cast<unsigned char>(
+        ((c & (i == loops) ? 0x3F : 0xFF) >> ((loops - i) * 6)) +
+        ((i == 0) ? header : 0x80));
+  }
+  fwrite(str.data(), sizeof(unsigned char), str.size(), out);
 }
 
 int main(int argc, char *argv[]) {
@@ -230,7 +213,7 @@ int main(int argc, char *argv[]) {
   printf("Number of custom words in the dictionary: %zu\n", dictionary.size());
 
   for(const auto c : comp_str)
-    write_char(out, c);
+    write_utf8(out, c);
 
   fclose(out);
   t.close();
