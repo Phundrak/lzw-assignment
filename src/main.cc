@@ -38,9 +38,9 @@ using uvec = std::vector<uint32_t>; // chaine encodée
 size_t size_str(dic_t &dict, uint32_t nr_chaine) {
   for(const auto &[key, value] : dict) {
     if(value == nr_chaine) {
-      if(key.first == 0xFFFFFFFF)
+      if(std::get<0>(key) == 0xFFFFFFFF)
         return 1;
-      return 1 + size_str(dict, key.first);
+      return 1 + size_str(dict, std::get<0>(key));
     }
   }
   return 0;
@@ -77,6 +77,14 @@ std::pair<bool, uint32_t> dico(dic_t &dictionary, uint32_t nr_chaine, uint8_t c)
                             typename std::remove_reference<decltype(e)>::type>(
                             dictionary.size()) +
                         255));
+  // auto &e = dictionary[std::make_tuple(nr_chaine, c, len)];
+  // return (e) ? std::make_pair(true, e)
+  //            : std::make_pair(
+  //                  false,
+  //                  (e = static_cast<
+  //                           typename std::remove_reference<decltype(e)>::type>(
+  //                           dictionary.size()) +
+  //                       255));
 }
 
 /**
@@ -93,19 +101,32 @@ std::pair<bool, uint32_t> dico(dic_t &dictionary, uint32_t nr_chaine, uint8_t c)
  *  \return std::vector<uint16_t>
  */
 const uvec compress(const ustring &text, dic_t &dictionary) {
+  std::puts("Compressing...");
   uvec res{};
   uint32_t w = 0xFFFFFFFF;
+  uint32_t len = 0;
+#ifdef Debug
+  size_t progress = 0;
+#endif
   for (const auto &c : text) {
-    if(size_str(dictionary , w) > 16) {
+    ++len;
+#ifdef Debug
+    printf("\rprogress: %zu / %zu", progress++, text.size());
+#endif
+    if (len > 9) {
       res.push_back(static_cast<uint32_t>(w));
       w = c;
-    } else if (const auto &[exists, pos] = dico(dictionary, w, c); exists) {
+      len = 0;
+    } else if (const auto &[exists, pos] = dico(dictionary, w, c);
+               exists) {
       w = pos;
     } else {
       res.push_back(static_cast<uint32_t>(w));
       w = c;
+      len = 0;
     }
   }
+  printf("\n");
   return res;
 }
 
@@ -200,15 +221,6 @@ int main(int argc, char *argv[]) {
   printf("Compressed, size of compressed string: %zu\n", comp_str.size());
   printf("Compression ratio: %.10f\n",
          static_cast<double>(str.size()) / static_cast<double>(comp_str.size()));
-
-#ifdef Debug
-  printf("// compressed file: hex "
-         "/////////////////////////////////////////////\n");
-  for (size_t i = 0; i < comp_str.size(); ++i)
-    printf("%04x%s", str[i],
-           (((i + 1) % 16 == 0) ? "\n" : ((i + 1) % 2 == 0 ? " " : "")));
-  printf("\n\n");
-#endif
 
   printf("Number of custom words in the dictionary: %zu\n", dictionary.size());
 
