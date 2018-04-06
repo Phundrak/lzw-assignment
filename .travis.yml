@@ -1,12 +1,7 @@
-language:	cpp
+language: cpp
+dist: trusty
 compiler:
-	- clang
-	- gcc
-os: linux
-addons:
-	apt:
-		sources:
-			- george-edison55-precise-backports
-		packages:
-			- cmake-data
-			- cmake
+- clang
+os:
+- linux
+ruby: 2.2.0
