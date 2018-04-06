@@ -3,10 +3,13 @@ matrix:
 		- language: cpp
 		  dist: trusty
 		  compiler:
-		    -clang
+		    - clang
 		  os:
-		    -linux
-		  script: cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+		    - linux
+		  script:
+		    - cd build
+		    - cmake -DCMAKE_BUILD_TYPE=Debug ..
+		    - make
 		- language: cpp
 			dist: trusty
 			compiler:
@@ -14,4 +17,11 @@ matrix:
 			os:
 				- linux
 			# ruby: 2.2.0
-			script: cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make
+			script:
+				- cd build
+				-	cmake -DCMAKE_BUILD_TYPE=Release ..
+				- make
+
+notifications:
+	email:
+		- phundrak@phundrak.fr
