@@ -1,4 +1,4 @@
-[[https://travis-ci.org/Phundrak/lzw-assignment.svg?branch=master][https://travis-ci.org/Phundrak/lzw-assignment.svg?branch=master]]
+[[https://travis-ci.org/Phundrak/lzw-assignment][https://travis-ci.org/Phundrak/lzw-assignment.svg?branch=master]]
 
 * LZW Compressing tool
 
