@@ -1,3 +1,5 @@
+[[https://travis-ci.org/Phundrak/lzw-assignment.svg?branch=master][https://travis-ci.org/Phundrak/lzw-assignment.svg?branch=master]]
+
 * LZW Compressing tool
 
 This is a university assignment for which I aim to create an LZW algorithm implementation to create a small tool similar to =gzip= and =gunzip= that can compress and uncompress files in a lossless fashion.
