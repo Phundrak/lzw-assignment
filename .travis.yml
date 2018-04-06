@@ -1,8 +1,17 @@
-language: cpp
-dist: trusty
-compiler:
-- clang
-os:
-- linux
-ruby: 2.2.0
-script: cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make
+matrix:
+	include:
+		- language: cpp
+		  dist: trusty
+		  compiler:
+		    -clang
+		  os:
+		    -linux
+		  script: cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+		- language: cpp
+			dist: trusty
+			compiler:
+				- clang
+			os:
+				- linux
+			# ruby: 2.2.0
+			script: cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make
