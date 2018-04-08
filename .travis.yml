@@ -35,6 +35,13 @@ matrix:
         - cmake -DCMAKE_BUILD_TYPE=Release ..
         - make -j
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-6.3
+
 notifications:
   email:
     - phundrak@phundrak.fr
