@@ -8,7 +8,6 @@ matrix:
       compiler: g++
       script:
         - cd build
-        - cmake --versison
         - cmake -DCMAKE_BUILD_TYPE=Debug ..
         - make -j
     - os: linux
@@ -16,7 +15,7 @@ matrix:
       compiler: clang
       script:
         - cd build
-        - cmake --versison
+        - cmake --version
         - cmake -DCMAKE_BUILD_TYPE=Debug ..
         - make -j
     - os: linux
@@ -24,7 +23,7 @@ matrix:
       compiler: g++
       script:
         - cd build
-        - cmake --versison
+        - cmake --version
         - cmake -DCMAKE_BUILD_TYPE=Release ..
         - make -j
     - os: linux
@@ -32,7 +31,7 @@ matrix:
       compiler: clang
       script:
         - cd build
-        - cmake --versison
+        - cmake --version
         - cmake -DCMAKE_BUILD_TYPE=Release ..
         - make -j
 
