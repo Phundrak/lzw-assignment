@@ -31,12 +31,6 @@ matrix:
         - cd build
         - cmake -DCMAKE_BUILD_TYPE=Release ..
         - make -j
-    - os: osx
-      compiler: clang
-      script:
-        - cd build
-        - cmake -DCMAKE_BUILD_TYPE=Release ..
-        - make -j
 
 notifications:
   email:
