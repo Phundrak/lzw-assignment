@@ -5,7 +5,7 @@ matrix:
   include:
     - os: linux
       dist: trusty
-      compiler: g++
+      compiler: g++-6
       script:
         - cd build
         - cmake -DCMAKE_BUILD_TYPE=Debug ..
@@ -20,7 +20,7 @@ matrix:
         - make -j
     - os: linux
       dist: trusty
-      compiler: g++
+      compiler: g++-6
       script:
         - cd build
         - cmake --version
