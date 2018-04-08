@@ -2,41 +2,41 @@ sudo: false
 language: cpp
 
 matrix:
-	include:
-		- os: linux
-			dist: trusty
-			compiler: gcc
-			script:
-				- cd build
-				- cmake -DCMAKE_BUILD_TYPE=Debug ..
-				- make -j
-		- os: linux
-			dist: trusty
-			compiler: clang
-			script:
-				- cd build
-				- cmake -DCMAKE_BUILD_TYPE=Debug ..
-				- make -j
-		- os: linux
-			dist: trusty
-			compiler: gcc
-			script:
-				- cd build
-				- cmake -DCMAKE_BUILD_TYPE=Release ..
-				- make -j
-		- os: linux
-			dist: trusty
-			compiler: clang
-			script:
-				- cd build
-				- cmake -DCMAKE_BUILD_TYPE=Release ..
-				- make -j
-		- os: osx
-			compiler: clang
-			script:
-				- cd build
-				- cmake -DCMAKE_BUILD_TYPE=Release ..
-				- make -j
+  include:
+    - os: linux
+      dist: trusty
+      compiler: gcc
+      script:
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=Debug ..
+        - make -j
+    - os: linux
+      dist: trusty
+      compiler: clang
+      script:
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=Debug ..
+        - make -j
+    - os: linux
+      dist: trusty
+      compiler: gcc
+      script:
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=Release ..
+        - make -j
+    - os: linux
+      dist: trusty
+      compiler: clang
+      script:
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=Release ..
+        - make -j
+    - os: osx
+      compiler: clang
+      script:
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=Release ..
+        - make -j
 
 notifications:
   email:
