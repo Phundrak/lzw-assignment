@@ -28,6 +28,9 @@ using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaine non encodée
 using uvec = std::vector<uint32_t>;         // chaine encodée
 
+/**
+ *  \brief Affichage d’aide
+ */
 void help() {
   puts("Usage:");
   puts("lzw  [-options] [-i path] [-o path]");
@@ -128,9 +131,21 @@ int main(int argc, char *argv[]) {
   }
 
   if (compressing) {
+    /*
+      TODO:
+      - compresser le fichier d’entrée morceaux par morceaux, 16Ko à la fois
+      - écrire la taille du segment compressé, puis le segment compressé
+      - multithreading
+      - compression multiple : nombre de compressions puis fichier compressé
+      - bit-packing, limiter la taille du dictionnaire pour un certain nombre de
+        bits.
+     */
     compress(input_path, output_path.c_str());
   } else {
     puts("Not yet implemented :(");
+    /*
+      Inversion des types du dictionnaire pour retrouver les chaînes plus aisément
+     */
   }
 
   return 0;
