@@ -6,11 +6,8 @@
  *
  */
 
-#include "utf8.hh"
 #include "compress.hh"
-#include <fstream>
-#include <iostream>
-#include <streambuf>
+#include "getopt.h"
 
 using std::printf;
 using std::puts;
@@ -29,55 +26,112 @@ using std::puts;
  */
 using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaine non encodée
-using uvec = std::vector<uint32_t>; // chaine encodée
+using uvec = std::vector<uint32_t>;         // chaine encodée
+
+void help() {
+  puts("Usage:");
+  puts("lzw  [-options] [-i path] [-o path]");
+  puts("\tThe default action is to compress the input file to a .lzw file");
+  puts("\tin which the directory in which the software is executed.");
+  puts("\tOptions available:");
+  puts("\t-i\tpath to the input file (mandatory)");
+  puts("\t-o\tpath to the output file (if the file already exists, it will");
+  puts("\t\tbe overwritten). Default: input path + \".lzw\"");
+  puts("\t-c\tcompress the input file");
+  puts("\t-d\tdecompresses the input file to the output file. If no output");
+  puts("\t\tpath has not been entered and if the input file ends with ");
+  puts("\t\t\".lzw\", the extension \".lzw\" will be removed; otherwise, the ");
+  puts("\t\textension \".uncompresed\" will be added");
+}
 
 int main(int argc, char *argv[]) {
-  if (argc < 2) {
-    puts("Usage: lzw <filename>");
-    return 1;
-  } else {
-    for (int i = 0; i < argc; ++i)
-      printf("argv[%d] = %s\n", i, argv[i]);
+#ifdef Debug
+  for (int i = 0; i < argc; ++i)
+    printf("argv[%d] = %s\n", i, argv[i]);
+#endif
+
+  std::string input_path{};
+  std::string output_path{};
+  bool compressing = true;
+
+  while (1) {
+    int option_index = 0;
+    static struct option long_options[] = {
+        {"help", no_argument, nullptr, 'h'},
+        {"input", required_argument, nullptr, 'i'},
+        {"output", required_argument, nullptr, 'o'},
+        {"compress", no_argument, nullptr, 'c'},
+        {"uncompress", no_argument, nullptr, 'u'},
+        {0, 0, 0, 0}};
+    int c = getopt_long(argc, argv, "hi:o:cu", long_options, &option_index);
+    if (c == -1)
+      break;
+    switch (c) {
+    case 0: {
+#ifdef Debug
+      printf("\noption %s", long_options[option_index].name);
+      if (optarg) {
+        printf(" with arg %s\n", optarg);
+      }
+#endif
+      break;
+    }
+    case 'h': {
+#ifdef Debug
+      printf("From main - option --help passed\n");
+#endif
+      help();
+      return 0;
+    }
+    case 'i': {
+#ifdef Debug
+      printf("From main - option --input with value '%s'\n", optarg);
+#endif
+      input_path = optarg;
+      break;
+    }
+    case 'o': {
+#ifdef Debug
+      printf("From main - option --output with value '%s'\n", optarg);
+#endif
+      output_path = optarg;
+      break;
+    }
+    case 'c': {
+#ifdef Debug
+      printf("From main - option --compress\n");
+#endif
+      compressing = true;
+      break;
+    }
+    case 'u': {
+#ifdef Debug
+      printf("From main - option --uncompress\n");
+#endif
+      compressing = false;
+      break;
+    }
+    case '?': {
+      puts("Error: unknown parameter.");
+#ifdef Debug
+      printf("From main - option -?\n");
+#endif
+      help();
+      return 1;
+    }
+    }
   }
 
-  // fichier d'entrée
-  std::ifstream t{argv[1]};
+  if (input_path == "") {
+    puts("Error: no input file specified");
+    return 2;
+  }
 
-  // fichier de sortie
-  FILE *out = fopen("output.lzw", "wb");
-
-  // string contenant le fichier d'entrée
-  ustring str{};
-
-  // réserver la mémoire dans le string pour le fichier à compresser
-  t.seekg(0, std::ios::end);
-  str.reserve(static_cast<unsigned long>(t.tellg()));
-  t.seekg(0, std::ios::beg);
-
-  // assigner au string les caractères du fichier
-  str.assign((std::istreambuf_iterator<char>(t)),
-             std::istreambuf_iterator<char>());
-
-  // test pour voir si tout est bien chargé
-  printf("Size of str: %zu\n", str.size());
-
-  // le dictionnaire, initialement vide.
-  dic_t dictionary{};
-
-  // compresssion du texte
-  const auto comp_str{compress(str, dictionary)};
-
-  printf("Compressed, size of compressed string: %zu\n", comp_str.size());
-  printf("Compression ratio: %.10f\n",
-         static_cast<double>(str.size()) / static_cast<double>(comp_str.size()));
-
-  printf("Number of custom words in the dictionary: %zu\n", dictionary.size());
-
-  for(const auto c : comp_str)
-    write_utf8(out, c);
-
-  fclose(out);
-  t.close();
+  if (compressing) {
+    compress(input_path, output_path.c_str());
+  } else {
+    puts("Not yet implemented :(");
+  }
 
   return 0;
 }

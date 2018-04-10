@@ -27,7 +27,7 @@ using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
  *  \param c Caractère suivant la chaine de caractères \p nr_chaine
  *  \return std::pair<bool, uint16_t>
  */
-std::pair<bool, uint32_t>
+const std::pair<bool, uint32_t>
 dico(std::map<std::pair<uint32_t, uint8_t>, uint32_t> &t_dictionary,
      uint32_t t_nr_chaine, uint8_t t_c) {
   if (t_nr_chaine == 0xFFFFFFFF)
