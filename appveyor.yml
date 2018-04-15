@@ -11,6 +11,9 @@ platform:
 
 shallow_clone: true
 
+before_build:
+  - cmd: choco install make
+
 build_script:
   - cmd: cd build
   - cmd: cmake -DCMAKE_BUILD_TYPE=Debug ..
