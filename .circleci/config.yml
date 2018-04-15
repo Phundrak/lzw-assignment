@@ -21,4 +21,4 @@ jobs:
           name: Build project
           command: |
             if [ ! -d ~/cmake-3.11.0-Linux-x86_64 ]; then; echo "No cache - building CMake"; cd ~ && wget --quiet https://cmake.org/files/v3.11/cmake-3.11.0-Linux-x86_64.tar.gz && tar -xvf cmake-3.11.0-Linux-x86_64.tar.gz; else; echo "Cached CMake found"; ls -Ahl ~/cmake-3.11.0-Linux-x86_64; fi
-          cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
+            cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
