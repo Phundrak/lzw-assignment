@@ -11,11 +11,9 @@ platform:
 
 shallow_clone: true
 
-before_build:
-  - cmd: choco install make
-
 build_script:
-  - cmd: set PATH=%PATH%;C:\ProgramData\chocolatey\lib\make\tools
-  - cmd: cd build
-  - cmd: cmake -DCMAKE_BUILD_TYPE=Debug ..
-  - cmd: msbuild *.sln
+  - cmd: |
+      set PATH=%PATH%;C:\ProgramData\chocolatey\lib\make\tools
+      cd build
+      cmake -DCMAKE_BUILD_TYPE=Debug ..
+      dir
