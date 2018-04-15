@@ -12,7 +12,22 @@ set(CXX_COVERAGE_COMPILE_FLAGS "-pedantic -Wall -Wextra -Wold-style-cast -Woverl
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_COVERAGE_COMPILE_FLAGS} -DDebug -g -pg")
 set(CMAKE_CXX_FLAGS_RELEASE "${CXX_COVERAGE_COMPILE_FLAGS} -O3")
 
-set(CMAKE_CXX_STANDARD 17)
+include(CheckCXXCompilerFlag)
+
+# Check for standard to use
+check_cxx_compiler_flag(-std=c++17 HAVE_FLAG_STD_CXX17)
+if(HAVE_FLAG_STD_CXX17)
+    set(CMAKE_CXX_STANDARD 17)
+else()
+    check_cxx_compiler_flag(-std=c++1z HAVE_FLAG_STD_CXX1Z)
+    if(HAVE_FLAG_STD_CXX1Z)
+        set(CXX_COVERAGE_COMPILE_FLAGS "${CXX_COVERAGE_COMPILE_FLAGS} -std=c++1z")
+    else()
+        message( FATAL_ERROR "C++17 not supported, CMake will exit." )
+    endif()
+endif()
+
+# set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
