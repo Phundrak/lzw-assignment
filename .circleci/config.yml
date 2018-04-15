@@ -9,9 +9,8 @@ jobs:
     steps:
       - checkout
       - save_cache:
-        key: dependency-cache
-        path:
-          - ~/cmake-3.11.0-Linux-x86_64
+          key: dependency-cache
+          path: ~/cmake-3.11.0-Linux-x86_64
       - run: sudo add-apt-repository -y ppa:jonathonf/gcc-7.1
       - run: sudo apt-get update
       - run: sudo apt-get install gcc-7 g++-7
