@@ -1,3 +1,4 @@
 dependencies:
   override:
+    - curl -sSL https://cmake.org/files/v3.9/cmake-3.9.1-Linux-x86_64.tar.gz | sudo tar -xzC ~ 
     - cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
