@@ -1,0 +1,22 @@
+version: '{branch}-{build}'
+
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      MSVC_GENERATOR: Visual Studio 15 2017
+      MSVC_GENERATOR_SHORT: VS2017
+
+platform:
+  - x64
+
+shallow_clone: true
+
+before_build:
+  - cmd: choco install make
+
+build_script:
+  - cmd: set PATH=%PATH%;C:\ProgramData\chocolatey\lib\make\tools
+  - cmd: cd build
+  - cmd: cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - cmd: dir
+  - cmd: make

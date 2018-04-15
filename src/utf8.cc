@@ -45,7 +45,7 @@ void write_utf8(FILE* t_out, uint32_t t_c) {
   ustring str(loops + 1, 0);
   for (size_t i = 0; i <= loops; ++i) {
     str[i] = static_cast<unsigned char>(
-        ((t_c & (i == loops) ? 0x3F : 0xFF) >> ((loops - i) * 6)) +
+        ((t_c & ((i == loops) ? 0x3F : 0xFF)) >> ((loops - i) * 6)) +
         ((i == 0) ? header : 0x80));
   }
   fwrite(str.data(), sizeof(unsigned char), str.size(), t_out);
