@@ -2,7 +2,7 @@ machine:
   timezone:
     Europe/Paris
   environment:
-    PATH: "/home/ubuntu/cmake-3.6.2-Linux-x86_64/bin:$PATH"
+    PATH: "/home/ubuntu/cmake-3.11.0-Linux-x86_64/bin:$PATH"
 
 dependencies:
   cache_directories:
@@ -11,7 +11,7 @@ dependencies:
     - >
       if [ ! -d ~/cmake-3.11.0-Linux-x86_64 ]; then
         echo "No cache - building CMake"
-        cd ~ && wget --quiet https://cmake.org/files/v3.6/cmake-3.11.0-Linux-x86_64.tar.gz && tar -xvf cmake-3.11.0-Linux-x86_64.tar.gz
+        cd ~ && wget --quiet https://cmake.org/files/v3.11/cmake-3.11.0-Linux-x86_64.tar.gz && tar -xvf cmake-3.11.0-Linux-x86_64.tar.gz
       else
         echo "Cached CMake found"
         ls -Ahl ~/cmake-3.11.0-Linux-x86_64
