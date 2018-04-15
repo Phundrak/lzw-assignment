@@ -1,0 +1,3 @@
+dependencies:
+  override:
+    - cd make; make; make test
