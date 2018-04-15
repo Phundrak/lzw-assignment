@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:16.04-curl-browsers
+    environment:
+      - PATH: "/home/ubuntu/cmake-3.11.0-Linux-x86_64/bin:$PATH"
+      - CXX: g++-7.1
+    steps:
+      - save_cache:
+        key: dependency-cache
+        path:
+          - ~/cmake-3.11.0-Linux-x86_64
+      - run:
+          name: Update gcc and g++ to version 7.1
+          command: |
+            sudo add-apt-repository -y ppa:jonathonf/gcc-7.1
+            sudo apt-get update
+            sudo apt-get install gcc-7 g++-7
+      - run:
+          name: Build project
+          command: |
+            if [ ! -d ~/cmake-3.11.0-Linux-x86_64 ]; then; echo "No cache - building CMake"; cd ~ && wget --quiet https://cmake.org/files/v3.11/cmake-3.11.0-Linux-x86_64.tar.gz && tar -xvf cmake-3.11.0-Linux-x86_64.tar.gz; else; echo "Cached CMake found"; ls -Ahl ~/cmake-3.11.0-Linux-x86_64; fi
+          cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
