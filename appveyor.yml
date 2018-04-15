@@ -16,4 +16,4 @@ build_script:
       set PATH=%PATH%;C:\ProgramData\chocolatey\lib\make\tools
       cd build
       cmake -DCMAKE_BUILD_TYPE=Debug ..
-      dir
+      msbuild projet_lzw.sln
