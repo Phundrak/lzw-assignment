@@ -1,14 +1,14 @@
 machine:
   environment:
     PATH: "/home/ubuntu/cmake-3.11.0-Linux-x86_64/bin:$PATH"
+    CXX: clang-3.9
 
 dependencies:
   cache_directories:
     - ~/cmake-3.11.0-Linux-x86_64
   pre:
     - sudo apt-get update
-    - sudo apt-get remove llvm-3.0
-    - sudo apt-get install llvm-3.9 libclang1-3.9 llvm-3.9-dev
+    - sudo apt-get install llvm-3.9 libclang1-3.9 llvm-3.9-dev clang-3.9
   override:
     - >
       if [ ! -d ~/cmake-3.11.0-Linux-x86_64 ]; then
