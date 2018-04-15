@@ -5,9 +5,6 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       MSVC_GENERATOR: Visual Studio 15 2017
       MSVC_GENERATOR_SHORT: VS2017
-    
-configuration:
-  - Debug
 
 platform:
   - x64
@@ -16,5 +13,5 @@ shallow_clone: true
 
 build_script:
   - cmd: cd build
-  - cmd: cmake -DCMAKE_BUILD_TYPE=%configuration% ..
-  - cmd: make
+  - cmd: cmake -DCMAKE_BUILD_TYPE=Debug ..
+  - cmd: cmake --build
