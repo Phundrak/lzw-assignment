@@ -9,12 +9,15 @@ environment:
 platform:
   - x64
 
+MAKE_DIR=C:/projects/lzw-assignment/build
+
 shallow_clone: true
 
 before_build:
   - cmd: choco install make
 
 build_script:
+  - cmd: set Path=%MAKE_DIR%;%Path%
   - cmd: cd build
   - cmd: cmake -DCMAKE_BUILD_TYPE=Debug ..
   - cmd: make
