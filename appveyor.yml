@@ -1,13 +1,10 @@
-version: '{branch}-{build}'
+# version: '{branch}-{build}'
 
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       MSVC_GENERATOR: Visual Studio 15 2017
       MSVC_GENERATOR_SHORT: VS2017
-
-platform:
-  - x64
 
 shallow_clone: true
 
