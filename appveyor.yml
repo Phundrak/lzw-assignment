@@ -15,6 +15,7 @@ before_build:
   - cmd: choco install make
 
 build_script:
+  - cmd: set PATH=%PATH%;C:\ProgramData\chocolatey\lib\make\tools
   - cmd: cd build
   - cmd: cmake -DCMAKE_BUILD_TYPE=Debug ..
-  - cmd: C:\ProgramData\chocolatey\lib\make\tools\make.exe
+  - cmd: make
