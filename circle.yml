@@ -1,6 +1,4 @@
 machine:
-  timezone:
-    Europe/Paris
   environment:
     PATH: "/home/ubuntu/cmake-3.11.0-Linux-x86_64/bin:$PATH"
 
@@ -8,10 +6,9 @@ dependencies:
   cache_directories:
     - ~/cmake-3.11.0-Linux-x86_64
   pre:
-    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     - sudo apt-get update
-    - sudo apt-get install gcc-6 g++-6
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 20 --slave /usr/bin/g++ g++ /usr/bin/g++-6
+    - sudo apt-get remove llvm-3.0
+    - sudo apt-get install llvm-3.9 libclang1-3.9 llvm-3.9-dev
   override:
     - >
       if [ ! -d ~/cmake-3.11.0-Linux-x86_64 ]; then
