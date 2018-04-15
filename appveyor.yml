@@ -17,4 +17,4 @@ before_build:
 build_script:
   - cmd: cd build
   - cmd: cmake -DCMAKE_BUILD_TYPE=Debug ..
-  - cmd: cmake --build
+  - cmd: make
