@@ -76,14 +76,17 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   std::ifstream input_file{t_in_file};
 
   // Fichier de sortie
-  FILE *out = nullptr;
-  if (t_out_file) {
-    out = fopen(t_out_file, "wb");
-  } else {
-    std::string out_name{t_in_file};
-    out_name.append(".lzw");
-    out = fopen(out_name.c_str(), "wb");
-  }
+  // FILE *out = nullptr;
+  // if (t_out_file) {
+  //   out = fopen(t_out_file, "wb");
+  // } else {
+  //   std::string out_name{t_in_file};
+  //   out_name.append(".lzw");
+  //   out = fopen(out_name.c_str(), "wb");
+  // }
+  FILE *out = (t_out_file)
+                  ? fopen(t_out_file, "wb")
+                  : fopen(std::string{t_out_file, ".lzw"}.c_str(), "wb");
 
   input_file.seekg(0, std::ios::end);
   // string contenant le fichier d’entrée
