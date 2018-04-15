@@ -2,9 +2,6 @@ version: '{branch}-{build}'
 
 environment:
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      MSVC_GENERATOR: Visual Studio 14 2015
-      MSVC_GENERATOR_SHORT: VS2015
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       MSVC_GENERATOR: Visual Studio 15 2017
       MSVC_GENERATOR_SHORT: VS2017
@@ -20,3 +17,4 @@ shallow_clone: true
 build_script:
   - cmd: cd build
   - cmd: cmake -DCMAKE_BUILD_TYPE=%configuration% ..
+  - cmd: make
