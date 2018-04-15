@@ -1,4 +1,19 @@
+machine:
+  timezone:
+    Europe/Paris
+  environment:
+    PATH: "/home/ubuntu/cmake-3.6.2-Linux-x86_64/bin:$PATH"
+
 dependencies:
+  cache_directories:
+    - ~/cmake-3.11.0-Linux-x86_64
   override:
-    - curl -sSL https://cmake.org/files/v3.9/cmake-3.9.1-Linux-x86_64.tar.gz | sudo tar -xzC ~ 
+    - >
+      if [ ! -d ~/cmake-3.11.0-Linux-x86_64 ]; then
+        echo "No cache - building CMake"
+        cd ~ && wget --quiet https://cmake.org/files/v3.6/cmake-3.11.0-Linux-x86_64.tar.gz && tar -xvf cmake-3.11.0-Linux-x86_64.tar.gz
+      else
+        echo "Cached CMake found"
+        ls -Ahl ~/cmake-3.11.0-Linux-x86_64
+      fi
     - cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
