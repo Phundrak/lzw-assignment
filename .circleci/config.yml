@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:16.04-curl-browsers
     environment:
-      - PATH: "$PATH:$HOME/.yarn/bin"
+      - PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - CXX: g++-7.1
     steps:
       - checkout
