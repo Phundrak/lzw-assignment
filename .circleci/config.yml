@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: rikorose/gcc-cmake:latest
+      - image: gcc:latest
 #       - image: madduci/docker-ubuntu-cpp:gcc-6
 #      - image: buildpack-deps:trusty
     environment:
