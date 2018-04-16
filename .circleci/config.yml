@@ -2,11 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-       - image: madduci/docker-ubuntu-cpp:gcc-6
+      - image: gcc:latest
+#       - image: madduci/docker-ubuntu-cpp:gcc-6
 #      - image: buildpack-deps:trusty
     environment:
-      - PATH: "$HOME/cmake-3.11.0-Linux-x86-64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      - CXX: g++-7.1
+      - PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     steps:
       - checkout
       - run: gcc --version
