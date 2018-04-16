@@ -2,7 +2,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: buildpack-deps:trusty
+       - image: madduci/docker-ubuntu-cpp:gcc-6
+#      - image: buildpack-deps:trusty
     environment:
       - PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - CXX: g++-7.1
