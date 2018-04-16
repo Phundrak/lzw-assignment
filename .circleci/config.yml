@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:16.04-curl-browsers
     environment:
-      - PATH: "/home/ubuntu/cmake-3.11.0-Linux-x86_64/bin:$PATH"
+      - PATH: "$PATH:$HOME/.yarn/bin"
       - CXX: g++-7.1
     steps:
       - checkout
