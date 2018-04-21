@@ -43,12 +43,11 @@ const uvec lzw_compress(const ustring &t_text, dict_t &t_dictionary) {
     printf("\rprogress: %zu / %zu", ++progress, t_text.size());
 #endif
 
-    if (/* len > LENGTH_MAX  || */ t_dictionary.size() >= DICT_MAX  ) {
+    if (/* len > LENGTH_MAX  || */ t_dictionary.size() >= DICT_MAX) {
       res.push_back(static_cast<uint32_t>(w));
       w = c;
       len = 0;
-      } else if (const auto &[exists, pos] = dico(t_dictionary, w, c);
-               exists) {
+    } else if (const auto &[exists, pos] = dico(t_dictionary, w, c); exists) {
       w = pos;
     } else {
       res.push_back(static_cast<uint32_t>(w));
@@ -76,14 +75,6 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   std::ifstream input_file{t_in_file};
 
   // Fichier de sortie
-  // FILE *out = nullptr;
-  // if (t_out_file) {
-  //   out = fopen(t_out_file, "wb");
-  // } else {
-  //   std::string out_name{t_in_file};
-  //   out_name.append(".lzw");
-  //   out = fopen(out_name.c_str(), "wb");
-  // }
   FILE *out = (t_out_file)
                   ? fopen(t_out_file, "wb")
                   : fopen(std::string{t_out_file, ".lzw"}.c_str(), "wb");
