@@ -9,7 +9,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <memory>
 #include <thread>
 
 #ifdef Debug
@@ -109,8 +108,8 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   while (input_file.read(chunk.data(),
                          static_cast<std::streamsize>(chunk.size()))) {
     threads.emplace_back(nullptr, uvec{});
-    threads.back().first = std::make_unique<std::thread>(
-        std::thread{lzw_compress, chunk, ref(threads.back().second)});
+    threads.back().first = std::unique_ptr<std::thread>(
+        new std::thread{lzw_compress, chunk, ref(threads.back().second)});
     assert(threads.back().first);
     if (threads.size() >= 8) {
       join_and_write(threads, out);
