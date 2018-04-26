@@ -10,13 +10,13 @@ matrix:
         - cd build
         - cmake -DCMAKE_BUILD_TYPE=Debug ..
         - make -j
+        - ../debug/projet_lzw -c -i ../debug/projet_lzw
     - script:
         - cd build
         - cmake -DCMAKE_BUILD_TYPE=Release ..
         - make -j
+        - ../bin/projet_lzw -c -i ../bin/projet_lzw
 
-
-            
 notifications:
   email:
     - phundrak@phundrak.fr
