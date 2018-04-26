@@ -3,18 +3,19 @@
  *   \brief Implementation of compression
  */
 
+#include "compress.hh"
+#include "utf8.hh"
+#include <cassert>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <thread>
+
 #ifdef Debug
 constexpr bool debug_mode = true;
 #else
 constexpr bool debug_mode = false;
 #endif
-
-#include "compress.hh"
-#include "utf8.hh"
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <thread>
 
 using dict_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaîne non encodée
@@ -106,10 +107,10 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   std::vector<char> chunk(32768, 0);
   while (input_file.read(chunk.data(),
                          static_cast<std::streamsize>(chunk.size()))) {
-    printf("\n");
     threads.emplace_back(nullptr, uvec{});
     threads.back().first = std::make_unique<std::thread>(
         std::thread{lzw_compress, chunk, ref(threads.back().second)});
+    assert(threads.back().first);
     if (threads.size() >= 8) {
       join_and_write(threads, out);
     }
