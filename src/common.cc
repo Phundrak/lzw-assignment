@@ -6,8 +6,8 @@
 #include "common.hh"
 
 using uint8_t = std::uint8_t;
-using uint32_t = std::uint32_t;
-using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
+using uint16_t = std::uint16_t;
+using dic_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
 
 /**
  *  Cette fonction a pour double usage la recherche d’une chaine de caractères
@@ -27,10 +27,10 @@ using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
  *  \param c Caractère suivant la chaine de caractères \p nr_chaine
  *  \return std::pair<bool, uint16_t>
  */
-const std::pair<bool, uint32_t>
-dico(std::map<std::pair<uint32_t, uint8_t>, uint32_t> &t_dictionary,
-     uint32_t t_nr_chaine, uint8_t t_c) {
-  if (t_nr_chaine == 0xFFFFFFFF)
+const std::pair<bool, uint16_t>
+dico(std::map<std::pair<uint16_t, uint8_t>, uint16_t> &t_dictionary,
+     uint16_t t_nr_chaine, uint8_t t_c) {
+  if (t_nr_chaine == 0xFFFF)
     return std::make_pair(true, t_c);
   auto &e = t_dictionary[std::make_pair(t_nr_chaine, t_c)];
   return (e) ? std::make_pair(true, e)

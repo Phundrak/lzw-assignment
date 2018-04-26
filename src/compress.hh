@@ -8,12 +8,11 @@
 
 #include "common.hh"
 #include <vector>
+#include <iostream>
 
 /// \brief Compression d'une chaine de caractères
-const std::vector<std::uint32_t>
-lzw_compress(const std::basic_string<uint8_t> &t_text,
-         std::map<std::pair<std::uint32_t, std::uint8_t>, std::uint32_t>
-             &t_dictionary);
+void lzw_compress(const std::vector<char> &t_text,
+                  std::vector<std::uint16_t> &t_rec);
 
 /// \brief Wrapper de \ref lzw_compress
 void compress(const std::string &t_in_file, const char *t_out_file);
