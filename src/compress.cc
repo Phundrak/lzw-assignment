@@ -16,56 +16,55 @@ constexpr bool debug_mode = false;
 #include <iostream>
 #include <thread>
 
-using dict_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
-using ustring = std::basic_string<uint8_t>; // chaine non encodée
-using uvec = std::vector<uint16_t>;         // chaine encodée
+using dict_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
+using ustring = std::basic_string<uint8_t>; // chaîne non encodée
+using uvec = std::vector<uint32_t>;         // chaîne encodée
 using std::printf;
 
+void join_and_write(
+    std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> &t_threads,
+    FILE *t_out) {
+  for (auto &elem : t_threads) {
+    (*elem.first).join();
+  }
+  for (auto &elem : t_threads) {
+    for (const auto c : elem.second) {
+      write_utf8(t_out, c);
+    }
+  }
+  t_threads.clear();
+}
+
 /**
- *  La chaine de caractère \p text est lue caractère par caractère, et est et
+ *  La chaîne de caractère \p t_text est lue caractère par caractère, et est et
  *  selon la valeur de retour de la fonction \ref dico (permettant dans le même
  *  temps la création du dictionnaire), on rajoute un mot ou pas dans le vecteur
  *  de caractères UTF-8 représentant des mots de chars compressés. La fonction
- *  renvoie ledit vecteur de uint32_t.
+ *  renvoie ledit vecteur de uint32_t via le paramètre \p t_res.
  *
- *  \param t_text Chaine de caractères uint8_t représentant le fichier d'entrée
- *  \param t_dictionary Dictionnaire de compression
- *  \return std::vector<uint16_t>
+ *  \param[in] t_text Chaîne de caractères uint8_t représentant le fichier
+ * d'entrée \param[out] t_res Chaîne de caractères de sortie
  */
 void lzw_compress(const std::vector<char> &t_text, uvec &t_res) {
   dict_t dictionary{};
   std::puts("Compressing...");
-  // uvec res{};
-  uint16_t w = 0xFFFF;
-  uint16_t len = 0;
+  uint32_t w = 0xFFFF;
 
   constexpr size_t DICT_MAX = 7936; /* 12 bits */
 
-  size_t progress = 0;
-
   for (const auto &c : t_text) {
-    ++len;
-
-    if constexpr (debug_mode) {
-      printf("\rprogress: %zu / %zu", ++progress, t_text.size());
-    }
-
-    if (/* len > LENGTH_MAX  || */ dictionary.size() >= DICT_MAX) {
-      t_res.push_back(static_cast<uint16_t>(w));
-      w = static_cast<uint16_t>(c);
-      len = 0;
+    if (dictionary.size() >= DICT_MAX) {
+      t_res.push_back(static_cast<uint32_t>(w));
+      w = static_cast<uint32_t>(c);
     } else if (const auto &[exists, pos] =
                    dico(dictionary, w, static_cast<std::uint8_t>(c));
                exists) {
       w = pos;
     } else {
-      t_res.push_back(static_cast<uint16_t>(w));
+      t_res.push_back(static_cast<uint32_t>(w));
       w = static_cast<std::uint8_t>(c);
-      len = 0;
     }
   }
-  printf("\n");
-  // return res;
 }
 
 /**
@@ -82,80 +81,65 @@ void lzw_compress(const std::vector<char> &t_text, uvec &t_res) {
 void compress(const std::string &t_in_file, const char *t_out_file) {
   // Fichier d’entrée
   std::ifstream input_file{t_in_file};
-  if(!input_file.is_open()) {
+  if (!input_file.is_open()) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 2
-              << ": could not open output file \"" << t_in_file << "\". Aborting...\n";
+              << ": could not open output file \"" << t_in_file
+              << "\". Aborting...\n";
     exit(1);
   }
 
   // Fichier de sortie
-  const char *filename =
-      (t_out_file) ? t_out_file : "output.lzw";
+  const char *filename = (t_out_file) ? t_out_file : "output.lzw";
   FILE *out = fopen(filename, "wb");
-  if(!out) {
+  if (!out) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
-              << ": could not open output file \"" << filename << "\". Aborting...\n";
+              << ": could not open output file \"" << filename
+              << "\". Aborting...\n";
     input_file.close();
     exit(1);
   }
-
-  // input_file.seekg(0, std::ios::end);
-  // // string contenant le fichier d’entrée
-  // ustring str(static_cast<unsigned long>(input_file.tellg()),
-  //             static_cast<unsigned char>(0));
-  // input_file.seekg(0, std::ios::beg);
-
-  // // assignation du contenu du fichier à str
-  // str.assign((std::istreambuf_iterator<char>(input_file)),
-  //            std::istreambuf_iterator<char>());
-
-  // printf("Size of input file: %zu\n", str.size());
-
-  // dict_t dictionary{};
-
-  // const auto comp_str{lzw_compress(str, dictionary)};
 
   // thread pool
   std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> threads{};
 
   // char chunk[32768];
-  std::vector<char> chunk{};
-  chunk.reserve(32768);
-  while (input_file.read(chunk.data(), 32768)) {
-    threads.push_back(std::make_pair(nullptr, uvec{}));
+  std::vector<char> chunk(32768, 0);
+  while (input_file.read(chunk.data(),
+                         static_cast<std::streamsize>(chunk.size()))) {
+    printf("\n");
+    threads.emplace_back(nullptr, uvec{});
     threads.back().first = std::make_unique<std::thread>(
         std::thread{lzw_compress, chunk, ref(threads.back().second)});
     if (threads.size() >= 8) {
-      for (auto &elem : threads) {
-        (*elem.first).join();
-      }
-      for (auto &elem : threads) {
-        for (const auto c : elem.second) {
-          write_utf8(out, c);
-        }
-      }
-      threads.clear();
+      join_and_write(threads, out);
     }
   }
 
-  if(threads.size() != 0) {
-    for (auto &elem : threads) {
-      (*elem.first).join();
+  if (!threads.empty()) {
+    join_and_write(threads, out);
+  }
+
+  if (input_file.tellg() != std::ios::end) {
+    std::puts("Leftovers, compressing...");
+    {
+      const auto prev_pos = input_file.tellg();
+      input_file.seekg(0, std::ios::end);
+      chunk.reserve(static_cast<size_t>(input_file.tellg() - prev_pos));
+      input_file.seekg(prev_pos, std::ios::beg);
+      std::istreambuf_iterator<char> itr(input_file);
+      for (std::streamoff i = 0; i < prev_pos; ++i, ++itr)
+        ;
+      chunk.assign((itr), std::istreambuf_iterator<char>());
     }
-    for (auto &elem : threads) {
-      for (const auto c : elem.second) {
-        write_utf8(out, c);
+    uvec ret{};
+    lzw_compress(chunk, ret);
+    for (const auto c : ret) {
+      if constexpr (debug_mode) {
+        printf("%c\t", c);
       }
+      write_utf8(out, c);
     }
-    threads.clear();
   }
-
-  if(input_file.tellg() != std::ios::end) {
-    std::puts("Leftovers...");
-  }
-
-  // for (const auto c : comp_str)
-  //   write_utf8(out, c);
 
   fclose(out);
   input_file.close();

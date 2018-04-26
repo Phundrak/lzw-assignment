@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
   std::string output_path{};
   bool compressing = true;
 
-  while (1) {
+  while (true) {
     int option_index = 0;
     static struct option long_options[] = {
         {"help", no_argument, nullptr, 'h'},
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
         {"output", required_argument, nullptr, 'o'},
         {"compress", no_argument, nullptr, 'c'},
         {"uncompress", no_argument, nullptr, 'u'},
-        {0, 0, 0, 0}};
+        {nullptr, 0, nullptr, 0}};
     int c = getopt_long(argc, argv, "hi:o:cu", long_options, &option_index);
     if (c == -1)
       break;
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (input_path == "") {
+  if (input_path.empty()) {
     puts("Error: no input file specified");
     return 2;
   }
