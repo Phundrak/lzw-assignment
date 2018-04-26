@@ -116,18 +116,18 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   // const auto comp_str{lzw_compress(str, dictionary)};
 
   // thread pool
-  std::vector<std::pair<std::thread, uvec>> threads{};
+  std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> threads{};
 
   // char chunk[32768];
   std::vector<char> chunk{};
   chunk.reserve(32768);
   while (input_file.read(chunk.data(), 32768)) {
-    threads.push_back(std::make_pair(std::thread{}, uvec{}));
-    threads.back().first =
-        std::thread{lzw_compress, chunk, ref(threads.back().second)};
+    threads.push_back(std::make_pair(nullptr, uvec{}));
+    threads.back().first = std::make_unique<std::thread>(
+        std::thread{lzw_compress, chunk, ref(threads.back().second)});
     if (threads.size() >= 8) {
       for (auto &elem : threads) {
-        elem.first.join();
+        (*elem.first).join();
       }
       for (auto &elem : threads) {
         for (const auto c : elem.second) {
@@ -136,6 +136,18 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
       }
       threads.clear();
     }
+  }
+
+  if(threads.size() != 0) {
+    for (auto &elem : threads) {
+      (*elem.first).join();
+    }
+    for (auto &elem : threads) {
+      for (const auto c : elem.second) {
+        write_utf8(out, c);
+      }
+    }
+    threads.clear();
   }
 
   if(input_file.tellg() != std::ios::end) {

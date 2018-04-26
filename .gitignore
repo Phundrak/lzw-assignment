@@ -6,3 +6,4 @@ gmon\.out
 cmake-build-debug/
 
 \.idea/
+*.lzw
