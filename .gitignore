@@ -1,3 +1,9 @@
 *~
 
 gmon\.out
+/cmake-build-debug/Makefile
+
+cmake-build-debug/
+
+\.idea/
+*.lzw

@@ -6,6 +6,12 @@
  *
  */
 
+#ifdef Debug
+constexpr bool debug_mode = true;
+#else
+constexpr bool debug_mode = false;
+#endif
+
 #include "compress.hh"
 #include "getopt.h"
 
@@ -48,16 +54,17 @@ void help() {
 }
 
 int main(int argc, char *argv[]) {
-#ifdef Debug
-  for (int i = 0; i < argc; ++i)
-    printf("argv[%d] = %s\n", i, argv[i]);
-#endif
+
+  if constexpr (debug_mode) {
+    for (int i = 0; i < argc; ++i)
+      printf("argv[%d] = %s\n", i, argv[i]);
+  }
 
   std::string input_path{};
   std::string output_path{};
   bool compressing = true;
 
-  while (1) {
+  while (true) {
     int option_index = 0;
     static struct option long_options[] = {
         {"help", no_argument, nullptr, 'h'},
@@ -65,67 +72,68 @@ int main(int argc, char *argv[]) {
         {"output", required_argument, nullptr, 'o'},
         {"compress", no_argument, nullptr, 'c'},
         {"uncompress", no_argument, nullptr, 'u'},
-        {0, 0, 0, 0}};
+        {nullptr, 0, nullptr, 0}};
     int c = getopt_long(argc, argv, "hi:o:cu", long_options, &option_index);
     if (c == -1)
       break;
     switch (c) {
     case 0: {
-#ifdef Debug
-      printf("\noption %s", long_options[option_index].name);
-      if (optarg) {
-        printf(" with arg %s\n", optarg);
+      if constexpr (debug_mode) {
+        printf("\noption %s", long_options[option_index].name);
+        if (optarg) {
+          printf(" with arg %s\n", optarg);
+        }
       }
-#endif
       break;
     }
     case 'h': {
-#ifdef Debug
-      printf("From main - option --help passed\n");
-#endif
+      if constexpr (debug_mode) {
+        printf("From main - option --help passed\n");
+      }
       help();
       return 0;
     }
     case 'i': {
-#ifdef Debug
-      printf("From main - option --input with value '%s'\n", optarg);
-#endif
+      if constexpr (debug_mode) {
+        printf("From main - option --input with value '%s'\n", optarg);
+      }
       input_path = optarg;
       break;
     }
     case 'o': {
-#ifdef Debug
-      printf("From main - option --output with value '%s'\n", optarg);
-#endif
+      if constexpr (debug_mode) {
+        printf("From main - option --output with value '%s'\n", optarg);
+      }
       output_path = optarg;
       break;
     }
     case 'c': {
-#ifdef Debug
-      printf("From main - option --compress\n");
-#endif
+      if constexpr (debug_mode) {
+        printf("From main - option --compress\n");
+      }
       compressing = true;
       break;
     }
     case 'u': {
-#ifdef Debug
-      printf("From main - option --uncompress\n");
-#endif
+      if constexpr (debug_mode) {
+        printf("From main - option --uncompress\n");
+      }
       compressing = false;
       break;
     }
-    case '?': {
+    case '?':
+    default: {
       puts("Error: unknown parameter.");
-#ifdef Debug
-      printf("From main - option -?\n");
-#endif
+      if constexpr (debug_mode) {
+        printf("From main - option -?\n");
+      }
       help();
       return 1;
     }
     }
   }
 
-  if (input_path == "") {
+  if (input_path.empty()) {
     puts("Error: no input file specified");
     return 2;
   }
@@ -140,7 +148,15 @@ int main(int argc, char *argv[]) {
       - bit-packing, limiter la taille du dictionnaire pour un certain nombre de
         bits.
      */
-    compress(input_path, output_path.c_str());
+    if constexpr (debug_mode) {
+      puts("Beginning compression");
+    }
+    if(output_path.empty()) {
+      compress(input_path, nullptr);
+    } else {
+      compress(input_path, output_path.c_str());
+    }
+    // compress(input_path, output_path.c_str());
   } else {
     puts("Not yet implemented :(");
     /*
