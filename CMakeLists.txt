@@ -37,6 +37,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "../debug/")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_COVERAGE_COMPILE_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_COVERAGE_COMPILE_FLAGS}")
 
-include_directories(include)
+include_directories(includes)
 file(GLOB SOURCES "src/*.cc")
 add_executable(${TGT} ${SOURCES})
