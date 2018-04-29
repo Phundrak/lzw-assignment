@@ -15,8 +15,8 @@ using ustring = std::basic_string<uint8_t>; // chaine non encodée
  *  Les caractères \c passés en argument sont écrit dans le fichier de sortie au
  *  format UTF-8
  *
- *  \param out Fichier de sortie
- *  \param c Caractères à écrire dans \p out
+ *  \param[in] out Fichier de sortie
+ *  \param[in] c Caractères à écrire dans \p out
  */
 void write_utf8(FILE* t_out, uint32_t t_c) {
   if(t_c < 128) {

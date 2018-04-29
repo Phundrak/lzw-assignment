@@ -9,19 +9,21 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <thread>
-
-#ifdef Debug
-constexpr bool debug_mode = true;
-#else
-constexpr bool debug_mode = false;
-#endif
 
 using dict_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaîne non encodée
 using uvec = std::vector<uint32_t>;         // chaîne encodée
 using std::printf;
 
+/**
+ *
+ *  Reçoit une liste de paires std::thread/vecteurs, le premier étant le
+ *  processus dont sa sortie est stockée dans le second. La sortie, une liste
+ *  de caractères uint32_t, est écrite dans le fichier de sortie \p out.
+ *
+ *  \param[in] t_threads
+ *  \param[out] t_out
+ */
 void join_and_write(
     std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> &t_threads,
     FILE *t_out) {
@@ -43,8 +45,8 @@ void join_and_write(
  *  de caractères UTF-8 représentant des mots de chars compressés. La fonction
  *  renvoie ledit vecteur de uint32_t via le paramètre \p t_res.
  *
- *  \param[in] t_text Chaîne de caractères uint8_t représentant le fichier
- * d'entrée \param[out] t_res Chaîne de caractères de sortie
+ *  \param[in] t_text Chaîne de caractères uint8_t représentant le fichier d'entrée
+ *  \param[out] t_res Chaîne de caractères de sortie
  */
 void lzw_compress(const std::vector<char> &t_text, uvec &t_res) {
   dict_t dictionary{};
@@ -69,15 +71,13 @@ void lzw_compress(const std::vector<char> &t_text, uvec &t_res) {
 }
 
 /**
- *  \brief function description
- *
  *  Wrapper de la fonction \ref lzw_compress gérant l'ouverture, la lecture,
  *  l'écriture et la fermeture des fichiers d’entrée et de sortie. Si \p
  *  t_out_file est nul (chemin non spécifié), il prendra alors la valeur de
  *  \p t_in_file à laquelle sera annexé l’extension `.lzw`.
  *
- *  \param t_in_file Chemin vers le fichier d’entrée
- *  \param t_out_file Chemin vers le fichier de sortie
+ *  \param[in] t_in_file Chemin vers le fichier d’entrée
+ *  \param[in] t_out_file Chemin vers le fichier de sortie
  */
 void compress(const std::string &t_in_file, const char *t_out_file) {
   // Fichier d’entrée
@@ -90,12 +90,11 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   }
 
   // Fichier de sortie
-  const char *filename = (t_out_file) ? t_out_file : "output.lzw";
-  FILE *out = fopen(filename, "wb");
+  FILE *out =
+      (t_out_file) ? fopen(t_out_file, "wb") : fopen("output.lzw", "wb");
   if (!out) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
-              << ": could not open output file \"" << filename
-              << "\". Aborting...\n";
+              << ": could not open output file. Aborting...\n";
     input_file.close();
     exit(1);
   }
@@ -108,8 +107,8 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   while (input_file.read(chunk.data(),
                          static_cast<std::streamsize>(chunk.size()))) {
     threads.emplace_back(nullptr, uvec{});
-    threads.back().first = std::unique_ptr<std::thread>(
-        new std::thread{lzw_compress, chunk, ref(threads.back().second)});
+    threads.back().first = std::make_unique<std::thread>(
+        std::thread{lzw_compress, chunk, ref(threads.back().second)});
     assert(threads.back().first);
     if (threads.size() >= 8) {
       join_and_write(threads, out);
@@ -135,9 +134,6 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
     uvec ret{};
     lzw_compress(chunk, ret);
     for (const auto c : ret) {
-      if constexpr (debug_mode) {
-        printf("%c\t", c);
-      }
       write_utf8(out, c);
     }
   }

@@ -9,6 +9,13 @@
 #include "common.hh"
 #include <vector>
 #include <iostream>
+#include <thread>
+
+/// \brief Exécution des threads et écriture de leur résultat dans le fichier de sortie
+void join_and_write(
+    std::vector<std::pair<std::unique_ptr<std::thread>, std::vector<uint32_t>>>
+        &,
+    FILE *);
 
 /// \brief Compression d'une chaine de caractères
 void lzw_compress(const std::vector<char> &, std::vector<std::uint32_t> &);

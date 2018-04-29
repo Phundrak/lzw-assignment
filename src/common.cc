@@ -22,10 +22,10 @@ using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
  *  ajoutée dans le dictionnaire ou non, et le uint32_t indiquant la valeur
  *  numérique de la chaîne dans le dictionnaire.
  *
- *  \param dictionary Dictionnaire
- *  \param nr_chaine Numéro de la chaine précédant le caractères \p c dans \p dictionary
- *  \param c Caractère suivant la chaine de caractères \p nr_chaine
- *  \return std::pair<bool, uint32_t>
+ *  \param t_dictionary Dictionnaire
+ *  \param t_nr_chaine Numéro de la chaine précédant le caractères \p t_c dans \p t_dictionary
+ *  \param t_c Caractère suivant la chaine de caractères \p t_nr_chaine
+ *  \return const std::pair<bool, uint32_t>
  */
 const std::pair<bool, uint32_t>
 dico(std::map<std::pair<uint32_t, uint8_t>, uint32_t> &t_dictionary,
