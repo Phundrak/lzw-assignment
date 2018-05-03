@@ -37,6 +37,18 @@ matrix:
       compiler: gcc
       before_install:
         - eval "${MATRIX_EVAL}"
+
+    # OSX Clang
+    - os: osx
+      osx_image: xcode8
+      env:
+        BUILD_TYPE=Release
+        BIN_DIR=bin
+    - os: osx
+      osx_image: xcode8
+      env:
+        BUILD_TYPE=Debug
+        BIN_DIR=debug
 script:
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
