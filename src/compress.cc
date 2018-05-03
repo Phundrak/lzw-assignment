@@ -9,11 +9,14 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include "io.hh"
 
 using dict_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaîne non encodée
-using uvec = std::vector<uint32_t>;         // chaîne encodée
+using uvec = std::vector<std::uint32_t>;         // chaîne encodée
 using std::printf;
+
+constexpr size_t CHUNK_SIZE = 32768;
 
 /**
  *
@@ -26,14 +29,12 @@ using std::printf;
  */
 void join_and_write(
     std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> &t_threads,
-    FILE *t_out) {
+    std::vector<std::vector<std::uint32_t>> &compressed_text) {
   for (auto &elem : t_threads) {
     (*elem.first).join();
   }
   for (auto &elem : t_threads) {
-    for (const auto c : elem.second) {
-      write_utf8(t_out, c);
-    }
+    compressed_text.push_back(std::move(elem.second));
   }
   t_threads.clear();
 }
@@ -99,24 +100,28 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
     exit(1);
   }
 
+  // collection of chunks
+  std::vector<std::vector<std::uint32_t>> compressed_text{};
+
   // thread pool
   std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> threads{};
 
-  // char chunk[32768];
-  std::vector<char> chunk(32768, 0);
+  // chunk chars
+  std::vector<char> chunk(CHUNK_SIZE, 0);
   while (input_file.read(chunk.data(),
                          static_cast<std::streamsize>(chunk.size()))) {
     threads.emplace_back(nullptr, uvec{});
+    threads.back().second.reserve(CHUNK_SIZE);
     threads.back().first = std::make_unique<std::thread>(
         std::thread{lzw_compress, chunk, ref(threads.back().second)});
     assert(threads.back().first);
     if (threads.size() >= 8) {
-      join_and_write(threads, out);
+      join_and_write(threads, compressed_text);
     }
   }
 
   if (!threads.empty()) {
-    join_and_write(threads, out);
+    join_and_write(threads, compressed_text);
   }
 
   if (input_file.tellg() != std::ios::end) {
@@ -133,10 +138,10 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
     }
     uvec ret{};
     lzw_compress(chunk, ret);
-    for (const auto c : ret) {
-      write_utf8(out, c);
-    }
+    compressed_text.push_back(std::move(ret));
   }
+
+  write_file(out, compressed_text);
 
   fclose(out);
   input_file.close();
