@@ -45,6 +45,8 @@ matrix:
       env:
         BUILD_TYPE=Release
         BIN_DIR=bin
+      before_install:
+        brew update
       install:
         brew install cmake
     - os: osx
@@ -53,6 +55,8 @@ matrix:
       env:
         BUILD_TYPE=Debug
         BIN_DIR=debug
+      before_install:
+        brew update
       install:
         brew install cmake
 script:
