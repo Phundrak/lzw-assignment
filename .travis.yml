@@ -9,7 +9,7 @@ addons:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
         packages:
-            - g++-6
+            - g++-7
             - clang-5.0
 
 matrix:
@@ -30,23 +30,15 @@ matrix:
     - env:
         BUILD_TYPE=Debug
         BIN_DIR=debug
+        CC=gcc-7
+        CXX=g++-7
       compiler: gcc
-      before_install:
-        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -qq
-      install:
-        - sudo apt-get install -qq g++-6
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
     - env:
         BUILD_TYPE=Release
         BIN_DIR=bin
+        CC=gcc-7
+        CXX=g++-7
       compiler: gcc
-      before_install:
-        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -qq
-      install:
-        - sudo apt-get install -qq g++-6
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
 script:
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
