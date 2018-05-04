@@ -61,4 +61,3 @@ script:
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
     - make -j
-    - ../$BIN_DIR/projet_lzw -c -i ../$BIN_DIR/projet_lzw
