@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker: # See https://docs.docker.com/get-started/#docker-concepts if you are new to Docker.
-      - image: 13coders/cpp17-base
+      - image: purplekarrot/gcc-8
     steps:
       - checkout
-      - run: CC=clang && CXX=clang++ && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
+      - run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
