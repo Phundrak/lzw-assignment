@@ -6,5 +6,4 @@ jobs:
     steps:
       - checkout
       - run: echo "A first hello"
-      - run: cd build
-      - run: pwd
+      - run: cd build && pwd
