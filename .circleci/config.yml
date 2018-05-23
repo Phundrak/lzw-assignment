@@ -1,0 +1,8 @@
+version: 2
+jobs:
+  build:
+    docker: # See https://docs.docker.com/get-started/#docker-concepts if you are new to Docker.
+      - image: purplekarrot/gcc-8
+    steps:
+      - checkout
+      - run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
