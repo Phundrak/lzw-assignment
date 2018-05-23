@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/Phundrak/lzw-assignment/tree/master.svg?style=svg)](https://circleci.com/gh/Phundrak/lzw-assignment/tree/master)
 [![Travis Badge](https://travis-ci.org/Phundrak/lzw-assignment.svg?branch=master)](https://travis-ci.org/Phundrak/lzw-assignment)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/80cf9a0514554f368effaf78d8e4ae15)](https://www.codacy.com/app/Phundrak/lzw-assignment?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Phundrak/lzw-assignment&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/phundrak/lzw-assignment/badge)](https://www.codefactor.io/repository/github/phundrak/lzw-assignment)
