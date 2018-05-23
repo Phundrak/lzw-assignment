@@ -11,7 +11,6 @@ addons:
         packages:
             - g++-7
             - clang-5.0
-            - lcov
 
 matrix:
   include:
@@ -48,8 +47,7 @@ matrix:
       before_install:
         brew update
       install:
-        - brew upgrade cmake
-        - brew install lcov
+        brew upgrade cmake
     - os: osx
       osx_image: xcode9.3
       env:
@@ -58,16 +56,8 @@ matrix:
       before_install:
         brew update
       install:
-        - brew install lcov
-        - brew upgrade cmake
+        brew upgrade cmake
 script:
     - cd build
     - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
     - make -j
-
-after_success:
-    - cd ${TRAVIS_BUILD_DIR}
-    - lcov --directory . --capture --output-file coverage.info # capture coverage info
-    - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
-    - lcov --list coverage.info
-    - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
