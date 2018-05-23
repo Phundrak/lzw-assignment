@@ -5,4 +5,4 @@ jobs:
       - image: 13coders/cpp17-base
     steps:
       - checkout
-      - run: cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
+      - run: CC=clang && CXX=clang++ && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j
