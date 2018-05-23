@@ -1,0 +1,17 @@
+version: 2
+jobs:
+    build:
+        docker:
+            - image: enumack/buildcontainers:gcc-8.1
+        steps:
+            - checkout
+            - run:
+                name: cd to build dir
+                command: cd -p build
+            - run:
+                name: run CMake
+                command: cmake -DCMAKE_BUILD_TYPE=Release ..
+            - run:
+                name: build project
+                command: make -j
+
