@@ -1,3 +1,6 @@
 component_depth: 2
 languages:
     - cpp
+exclude:
+    - .*\.h
+    - .*\.c
