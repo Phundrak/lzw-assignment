@@ -30,10 +30,11 @@ using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 const std::pair<bool, uint32_t>
 dico(std::map<std::pair<uint32_t, uint8_t>, uint32_t> &t_dictionary,
      uint32_t t_nr_chaine, uint8_t t_c) {
-  if (t_nr_chaine == 0xFFFF)
+  if (t_nr_chaine == 0xFFFF) {
     return std::make_pair(true, t_c);
+  }
   auto &e = t_dictionary[std::make_pair(t_nr_chaine, t_c)];
-  return (e) ? std::make_pair(true, e)
+  return (e != 0) ? std::make_pair(true, e)
              : std::make_pair(
                    false,
                    (e = static_cast<

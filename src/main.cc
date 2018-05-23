@@ -54,7 +54,6 @@ void help() {
 }
 
 int main(int argc, char *argv[]) {
-
   if constexpr (debug_mode) {
     for (int i = 0; i < argc; ++i)
       printf("argv[%d] = %s\n", i, argv[i]);
@@ -151,7 +150,7 @@ int main(int argc, char *argv[]) {
     if constexpr (debug_mode) {
       puts("Beginning compression");
     }
-    if(output_path.empty()) {
+    if (output_path.empty()) {
       compress(input_path, nullptr);
     } else {
       compress(input_path, output_path.c_str());
@@ -160,7 +159,8 @@ int main(int argc, char *argv[]) {
   } else {
     puts("Not yet implemented :(");
     /*
-      Inversion des types du dictionnaire pour retrouver les chaînes plus aisément
+      Inversion des types du dictionnaire pour retrouver les chaînes plus
+      aisément
      */
   }
 

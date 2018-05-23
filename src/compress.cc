@@ -92,8 +92,8 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
 
   // Fichier de sortie
   FILE *out =
-      (t_out_file) ? fopen(t_out_file, "wb") : fopen("output.lzw", "wb");
-  if (!out) {
+      (t_out_file != nullptr) ? fopen(t_out_file, "wb") : fopen("output.lzw", "wb");
+  if (out == nullptr) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
               << ": could not open output file. Aborting...\n";
     input_file.close();
@@ -132,8 +132,9 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
       chunk.reserve(static_cast<size_t>(input_file.tellg() - prev_pos));
       input_file.seekg(prev_pos, std::ios::beg);
       std::istreambuf_iterator<char> itr(input_file);
-      for (std::streamoff i = 0; i < prev_pos; ++i, ++itr)
+      for (std::streamoff i = 0; i < prev_pos; ++i, ++itr){
         ;
+      }
       chunk.assign((itr), std::istreambuf_iterator<char>());
     }
     uvec ret{};
