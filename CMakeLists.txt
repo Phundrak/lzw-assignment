@@ -7,15 +7,6 @@ set(TGT "projet_lzw")
 set(${TGT}_VERSION_MAJOR 0)
 set(${TGT}_VERSION_MINOR 1)
 
-message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-IF(CMAKE_BUILD_TYPE MATCHES Debug)
-    message("Debug build.")
-ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
-    message("Release build.")
-ELSE()
-    message("Some other build.")
-ENDIF()
-
 set(CXX_COVERAGE_COMPILE_FLAGS "-pedantic -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -Wfloat-equal -Wwrite-strings -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wsign-conversion -Wshadow -Weffc++ -Wredundant-decls -Wdouble-promotion -Winit-self -Wswitch-default -Wswitch-enum -Wundef -Winline -Wunused -Wnon-virtual-dtor -pthread")
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_COVERAGE_COMPILE_FLAGS} -DDebug -g -pg")
 set(CMAKE_CXX_FLAGS_RELEASE "${CXX_COVERAGE_COMPILE_FLAGS} -O3")
@@ -34,8 +25,6 @@ else()
         message( FATAL_ERROR "C++17 not supported, CMake will exit." )
     endif()
 endif()
-
-# set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -44,6 +33,26 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "../debug/")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_COVERAGE_COMPILE_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_COVERAGE_COMPILE_FLAGS}")
+
+# indicate the doc build as an option, ON by default
+if(CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
+    option(BUILD_DOC "Build documentation" ON)
+    find_package(Doxygen
+                 REQUIRED dot)
+    if(DOXYGEN_FOUND)
+        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in)
+        set(DOXYGEN_OUT ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile)
+        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+        message("Doxygen build started")
+        add_custom_target(docs ALL
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM )
+    else()
+        message("Doxygen needs to be installed to generate the doxygen documentation.")
+    endif()
+endif()
 
 include_directories(includes)
 file(GLOB SOURCES "src/*.cc")
