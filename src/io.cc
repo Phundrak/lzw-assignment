@@ -69,9 +69,8 @@ void write_file(FILE *const t_out, const vvuint32 &t_text) {
 void write_chunk(FILE *const t_out, const vuint32 &t_chunk) {
   const auto chunk_size = static_cast<uint32_t>(t_chunk.size());
   fwrite(&chunk_size, sizeof(chunk_size), 1, t_out);
-  std::array<unsigned char, 3> data{};
+  std::array<unsigned char, 3> data = {0, 0, 0};
   for (size_t i = 0; i < t_chunk.size(); ++i) {
-    data.fill(0);
     if (i % 2 == 0) {
       data[0] = static_cast<unsigned char>(t_chunk[i] >> 4);
       data[1] = static_cast<unsigned char>(t_chunk[i] << 4);
