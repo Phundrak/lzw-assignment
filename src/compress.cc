@@ -4,39 +4,39 @@
  */
 
 #include "compress.hh"
-#include "utf8.hh"
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include "io.hh"
+using std::vector;
+using std::uint8_t;
+using std::uint32_t;
+using std::string;
+using vuint32 = vector<uint32_t>;
+using vvuint32 = vector<vuint32>;
+using std::string;
 
 using dict_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaîne non encodée
 using uvec = std::vector<std::uint32_t>;         // chaîne encodée
 using std::printf;
 
-constexpr size_t CHUNK_SIZE = 32768;
+// constexpr size_t CHUNK_SIZE = 32768;
 
-/**
- *
- *  Reçoit une liste de paires std::thread/vecteurs, le premier étant le
- *  processus dont sa sortie est stockée dans le second. La sortie, une liste
- *  de caractères uint32_t, est écrite dans le fichier de sortie \p out.
- *
- *  \param[in] t_threads
- *  \param[out] t_out
- */
-void join_and_write(
-    std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> &t_threads,
-    std::vector<std::vector<std::uint32_t>> &compressed_text) {
-  for (auto &elem : t_threads) {
-    (*elem.first).join();
+constexpr int ipow(int base, int exp) {
+  int result = 1;
+  for (;;) {
+    if (exp & 1) {
+      result *= base;
+    }
+    exp >>= 1;
+    if (exp == 0) {
+      break;
+    }
+    base *= base;
   }
-  for (auto &elem : t_threads) {
-    compressed_text.push_back(std::move(elem.second));
-  }
-  t_threads.clear();
+  return result;
 }
 
 /**
@@ -49,26 +49,36 @@ void join_and_write(
  *  \param[in] t_text Chaîne de caractères uint8_t représentant le fichier d'entrée
  *  \param[out] t_res Chaîne de caractères de sortie
  */
-void lzw_compress(const std::vector<char> &t_text, uvec &t_res) {
-  dict_t dictionary{};
+vvuint32 lzw_compress(string &&t_text) {
   std::puts("Compressing...");
   uint32_t w = 0xFFFF;
+  vuint32 chunk{};
+  vvuint32 res{};
+  dict_t dict{};
 
-  constexpr size_t DICT_MAX = 7936; /* 12 bits */
+  constexpr size_t DICT_MAX = ipow(2, 13) - 256; /* 12 bits */
 
-  for (const auto &c : t_text) {
-    if (dictionary.size() >= DICT_MAX) {
-      t_res.push_back(static_cast<uint32_t>(w));
-      w = static_cast<uint32_t>(c);
-    } else if (const auto &[exists, pos] =
-                   dico(dictionary, w, static_cast<std::uint8_t>(c));
-               exists) {
+  for(const auto c : t_text) {
+    if(dict.size() >= DICT_MAX) {
+      // Dictionary full -> chunk pushed, dict emptied
+      res.push_back(std::move(chunk));
+      chunk = vuint32{};
+      dict = dict_t{};
+      w = 0xFFFF;
+    }
+    if (const auto &[yes, pos] = dico(dict, w, static_cast<uint8_t>(c)); yes) {
       w = pos;
     } else {
-      t_res.push_back(static_cast<uint32_t>(w));
-      w = static_cast<std::uint8_t>(c);
+      chunk.push_back(static_cast<uint32_t>(w));
+      w = static_cast<uint32_t>(c);
     }
   }
+  if(w != 0xFFFF) {
+    chunk.push_back(w);
+    res.push_back(std::move(chunk));
+  }
+
+  return res;
 }
 
 /**
@@ -91,8 +101,10 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   }
 
   // Fichier de sortie
-  FILE *out =
+  FILE *const out =
       (t_out_file != nullptr) ? fopen(t_out_file, "wb") : fopen("output.lzw", "wb");
+  // std::ofstream out{(t_out_file != nullptr) ? t_out_file : "output.lzw",
+  //                   std::ios::binary};
   if (out == nullptr) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
               << ": could not open output file. Aborting...\n";
@@ -100,47 +112,9 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
     exit(1);
   }
 
-  // collection of chunks
-  std::vector<std::vector<std::uint32_t>> compressed_text{};
-
-  // thread pool
-  std::vector<std::pair<std::unique_ptr<std::thread>, uvec>> threads{};
-
-  // chunk chars
-  std::vector<char> chunk(CHUNK_SIZE, 0);
-  while (input_file.read(chunk.data(),
-                         static_cast<std::streamsize>(chunk.size()))) {
-    threads.emplace_back(nullptr, uvec{});
-    threads.back().second.reserve(CHUNK_SIZE);
-    threads.back().first = std::make_unique<std::thread>(
-        std::thread{lzw_compress, chunk, ref(threads.back().second)});
-    assert(threads.back().first);
-    if (threads.size() >= 8) {
-      join_and_write(threads, compressed_text);
-    }
-  }
-
-  if (!threads.empty()) {
-    join_and_write(threads, compressed_text);
-  }
-
-  if (input_file.tellg() != std::ios::end) {
-    std::puts("Leftovers, compressing...");
-    {
-      const auto prev_pos = input_file.tellg();
-      input_file.seekg(0, std::ios::end);
-      chunk.reserve(static_cast<size_t>(input_file.tellg() - prev_pos));
-      input_file.seekg(prev_pos, std::ios::beg);
-      std::istreambuf_iterator<char> itr(input_file);
-      for (std::streamoff i = 0; i < prev_pos; ++i, ++itr){
-        ;
-      }
-      chunk.assign((itr), std::istreambuf_iterator<char>());
-    }
-    uvec ret{};
-    lzw_compress(chunk, ret);
-    compressed_text.push_back(std::move(ret));
-  }
+  const auto compressed_text{
+      lzw_compress(std::string{std::istreambuf_iterator<char>(input_file),
+                               std::istreambuf_iterator<char>()})};
 
   write_file(out, compressed_text);
 

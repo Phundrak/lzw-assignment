@@ -4,12 +4,23 @@
  */
 
 #include "io.hh"
+#include <array>
 
 #ifdef Debug
 constexpr bool debug_mode = true;
+#include <algorithm>
 #else
 constexpr bool debug_mode = false;
 #endif
+
+using std::vector;
+using std::uint32_t;
+using vuint32 = vector<uint32_t>;
+using vvuint32 = vector<vuint32>;
+
+
+
+constexpr unsigned char char_size = 12;
 
 /**
  *  Écrit dans le fichier \p t_out les chunks passés en paramètre. Le fichier de
@@ -35,61 +46,42 @@ constexpr bool debug_mode = false;
  *  \param[out] t_out Fichier de sortie
  *  \param[in] t_text Collection ordonnée des chunks à écrire dans \p t_out
  */
-void write_file(FILE *t_out, std::vector<std::vector<std::uint32_t>> &t_text) {
-  {
-    uint32_t char_size = 12;
-    if constexpr (debug_mode) {
-      std::printf("Char size: %u\n", char_size);
-    }
-    fwrite(&char_size, sizeof(uint32_t), 1, t_out);
-    auto size = static_cast<uint32_t>(t_text.size());
-    if constexpr (debug_mode) {
-      std::printf("Number of chunks: %u\n", size);
-    }
-    fwrite(&size, sizeof(uint32_t), 1, t_out);
+void write_file(FILE *const t_out, const vvuint32 &t_text) {
+  const auto size = static_cast<uint32_t>(t_text.size());
+  if constexpr (debug_mode) {
+    std::printf("Char size: %u\n", char_size);
+    std::printf("Number of chunks: %u\n", size);
   }
-  for(const auto &chunk : t_text) {
-    // write size of chunk in uint32_t
-    {
-      auto size = static_cast<uint32_t>(chunk.size());
-      if constexpr (debug_mode) {
-        std::printf("Size of chunk: %u\n", size);
-      }
-      fwrite(&size, sizeof(uint32_t), 1, t_out);
+  fwrite(&char_size, sizeof(char_size), 1, t_out);
+  fwrite(&size, sizeof(size), 1, t_out);
+  for (const auto &chunk : t_text) {
+    if constexpr (debug_mode) {
+      std::printf("Size of chunk: %zu\n", chunk.size());
     }
-    uint8_t remainder = 0x00;
-    for(size_t i = 0; i < chunk.size(); ++i) {
-      if(i % 2 == 0) {
-        // char = xxxx xxxx xxxx
-        //        ^^^^^^^^^ ^^^^
-        //          write   keep in remainder as xxxx0000
-        auto temp = static_cast<unsigned char>(chunk[i] >> 4);
-        fwrite(&temp, sizeof(temp), 1, t_out);
-        if constexpr (debug_mode) {
-          std::printf("writing: %x\t\t", temp);
-        }
-        remainder = static_cast<uint8_t>(chunk[i] << 4);
-      } else {
-        // already have `remainder = yyyy0000`
-        //          char = xxxx xxxx xxxx
-        //                 ^^^^ ^^^^^^^^^
-        // remainder = yyyyxxxx   write after remainder
-        // remainder = 00000000
-        remainder &= static_cast<unsigned char>(chunk[i]) >> 8 & 0xF0;
-        fwrite(&remainder, sizeof(remainder), 1, t_out);
-        if constexpr (debug_mode) {
-          std::printf("writing remainder: %x\t\t", remainder);
-        }
-        auto temp = static_cast<unsigned char>(chunk[i]);
-        fwrite(&temp, sizeof(temp), 1, t_out);
-        if constexpr (debug_mode) {
-          std::printf("writing: %x\n", temp);
-        }
-        remainder = 0x00;
-      }
+    write_chunk(t_out, chunk);
+  }
+}
+
+/**
+ *  \param t_out Output file
+ *  \param t_chunk Chunk to be written to \p t_out
+ */
+void write_chunk(FILE *const t_out, const vuint32 &t_chunk) {
+  const auto chunk_size = static_cast<uint32_t>(t_chunk.size());
+  fwrite(&chunk_size, sizeof(chunk_size), 1, t_out);
+  std::array<unsigned char, 3> data{};
+  for (size_t i = 0; i < t_chunk.size(); ++i) {
+    data.fill(0);
+    if (i % 2 == 0) {
+      data[0] = static_cast<unsigned char>(t_chunk[i] >> 4);
+      data[1] = static_cast<unsigned char>(t_chunk[i] << 4);
+    } else {
+      data[1] |= static_cast<unsigned char>(t_chunk[i] >> 8) & 0x0F;
+      data[2] = static_cast<unsigned char>(t_chunk[i]);
+      fwrite(data.data(), sizeof(data[0]), 3, t_out);
     }
-    if(remainder != 0) {
-      fwrite(&remainder, sizeof(remainder), 1, t_out);
-    }
+  }
+  if (t_chunk.size() % 2 != 0) {
+    fwrite(data.data(), sizeof(data[0]), 3, t_out);
   }
 }

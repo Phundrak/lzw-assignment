@@ -8,6 +8,7 @@
 
 #include <cstdio>
 #include <cstdint>
+#include <iostream>
 #include <vector>
 
 /*
@@ -26,6 +27,9 @@
 
 
 /// \brief Écrit dans le fichier le texte compressé
-void write_file(FILE *, std::vector<std::vector<std::uint32_t>> &);
+void write_file(FILE *const, const std::vector<std::vector<std::uint32_t>> &);
+
+/// \brief Écrit un chunk dans le fichier de sortie
+void write_chunk(FILE *const, const std::vector<std::uint32_t> &);
 
 #endif /* LZW_SRC_IO_H_ */

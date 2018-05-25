@@ -10,14 +10,14 @@
 #include <vector>
 #include <iostream>
 #include <thread>
-
-/// \brief Exécution des threads et écriture de leur résultat dans le fichier de sortie
-void join_and_write(std::vector<std::pair<std::unique_ptr<std::thread>,
-                                          std::vector<std::uint32_t>>> &,
-                    std::vector<std::vector<std::uint32_t>> &);
+#include <optional>
 
 /// \brief Compression d'une chaine de caractères
-void lzw_compress(const std::vector<char> &, std::vector<std::uint32_t> &);
+std::vector<std::vector<std::uint32_t>> lzw_compress(std::string &&);
+
+std::optional<std::uint32_t>
+lzw_compress_char(std::vector<std::vector<std::uint32_t>> &,
+                  std::vector<std::uint32_t> &, const char);
 
 /// \brief Wrapper de \ref lzw_compress
 void compress(const std::string &, const char *);
