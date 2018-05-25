@@ -1,12 +1,20 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
-set(CMAKE_BUILD_TYPE Debug)
 
 project("projet_lzw")
 
 set(TGT "projet_lzw")
 set(${TGT}_VERSION_MAJOR 0)
 set(${TGT}_VERSION_MINOR 1)
+
+message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+IF(CMAKE_BUILD_TYPE MATCHES Debug)
+    message("Debug build.")
+ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
+    message("Release build.")
+ELSE()
+    message("Some other build.")
+ENDIF()
 
 set(CXX_COVERAGE_COMPILE_FLAGS "-pedantic -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -Wfloat-equal -Wwrite-strings -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wsign-conversion -Wshadow -Weffc++ -Wredundant-decls -Wdouble-promotion -Winit-self -Wswitch-default -Wswitch-enum -Wundef -Winline -Wunused -Wnon-virtual-dtor -pthread")
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_COVERAGE_COMPILE_FLAGS} -DDebug -g -pg")
