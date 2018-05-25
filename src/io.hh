@@ -1,5 +1,5 @@
 /**
- *   \file io.h
+ *   \file io.hh
  *   \brief Header for file reading and writing
  */
 

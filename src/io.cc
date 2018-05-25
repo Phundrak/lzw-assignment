@@ -75,7 +75,7 @@ void write_chunk(FILE *const t_out, const vuint32 &t_chunk) {
       data[0] = static_cast<unsigned char>(t_chunk[i] >> 4);
       data[1] = static_cast<unsigned char>(t_chunk[i] << 4);
     } else {
-      data[1] |= static_cast<unsigned char>(t_chunk[i] >> 8) & 0x0F;
+      data[1] |= static_cast<unsigned char>(t_chunk[i] >> 8) & 0xC;
       data[2] = static_cast<unsigned char>(t_chunk[i]);
       fwrite(data.data(), sizeof(data[0]), 3, t_out);
     }

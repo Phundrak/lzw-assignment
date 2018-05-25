@@ -42,11 +42,10 @@ constexpr size_t DICT_MAX = ipow(2, 13) - 256; /* 12 bits */
  *  La chaîne de caractère \p t_text est lue caractère par caractère, et est et
  *  selon la valeur de retour de la fonction \ref dico (permettant dans le même
  *  temps la création du dictionnaire), on rajoute un mot ou pas dans le vecteur
- *  de caractères UTF-8 représentant des mots de chars compressés. La fonction
- *  renvoie ledit vecteur de uint32_t via le paramètre \p t_res.
+ *  de caractères UTF-8 représentant des mots de chars compressés.
  *
- *  \param[in] t_text Chaîne de caractères uint8_t représentant le fichier d'entrée
- *  \param[out] t_res Chaîne de caractères de sortie
+ *  \param t_text Chaîne de caractères uint8_t représentant le fichier d'entrée
+ *  \return Vecteur de chunks (vecteurs de uint32_t)
  */
 vvuint32 lzw_compress(string &&t_text) {
   std::puts("Compressing...");
@@ -88,33 +87,16 @@ vvuint32 lzw_compress(string &&t_text) {
  *  \param[in] t_out_file Chemin vers le fichier de sortie
  */
 void compress(const std::string &t_in_file, const char *t_out_file) {
-  // Fichier d’entrée
   std::ifstream input_file{t_in_file};
-  if (!input_file.is_open()) {
-    std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 2
-              << ": could not open output file \"" << t_in_file
-              << "\". Aborting...\n";
-    exit(1);
-  }
-
-  // Fichier de sortie
-  FILE *const out =
-      (t_out_file != nullptr) ? fopen(t_out_file, "wb") : fopen("output.lzw", "wb");
-  // std::ofstream out{(t_out_file != nullptr) ? t_out_file : "output.lzw",
-  //                   std::ios::binary};
+  assert(input_file.is_open());
+  FILE *const out = (t_out_file != nullptr) ? fopen(t_out_file, "wb") : fopen("output.lzw", "wb");
   if (out == nullptr) {
-    std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
-              << ": could not open output file. Aborting...\n";
+    std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4 << ": could not open output file. Aborting...\n";
     input_file.close();
     exit(1);
   }
-
-  const auto compressed_text{
-      lzw_compress(std::string{std::istreambuf_iterator<char>(input_file),
-                               std::istreambuf_iterator<char>()})};
-
+  const auto compressed_text{lzw_compress(std::string{std::istreambuf_iterator<char>(input_file), std::istreambuf_iterator<char>()})};
   write_file(out, compressed_text);
-
   fclose(out);
   input_file.close();
 }
