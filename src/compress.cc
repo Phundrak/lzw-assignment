@@ -7,7 +7,6 @@
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include "io.hh"
 using std::vector;
 using std::uint8_t;
@@ -21,8 +20,6 @@ using dict_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaîne non encodée
 using uvec = std::vector<std::uint32_t>;         // chaîne encodée
 using std::printf;
-
-// constexpr size_t CHUNK_SIZE = 32768;
 
 constexpr int ipow(int base, int exp) {
   int result = 1;
@@ -38,6 +35,8 @@ constexpr int ipow(int base, int exp) {
   }
   return result;
 }
+
+constexpr size_t DICT_MAX = ipow(2, 13) - 256; /* 12 bits */
 
 /**
  *  La chaîne de caractère \p t_text est lue caractère par caractère, et est et
@@ -55,8 +54,6 @@ vvuint32 lzw_compress(string &&t_text) {
   vuint32 chunk{};
   vvuint32 res{};
   dict_t dict{};
-
-  constexpr size_t DICT_MAX = ipow(2, 13) - 256; /* 12 bits */
 
   for(const auto c : t_text) {
     if(dict.size() >= DICT_MAX) {

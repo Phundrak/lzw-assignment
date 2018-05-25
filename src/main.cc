@@ -155,7 +155,6 @@ int main(int argc, char *argv[]) {
     } else {
       compress(input_path, output_path.c_str());
     }
-    // compress(input_path, output_path.c_str());
   } else {
     puts("Not yet implemented :(");
     /*
