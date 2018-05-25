@@ -11,6 +11,11 @@ addons:
         packages:
             - g++-7
             - clang-5.0
+            - doxygen
+            - doxygen-doc
+            - doxygen-latex
+            - doxygen-gui
+            - graphviz
 
 matrix:
   include:
@@ -45,7 +50,8 @@ matrix:
         BUILD_TYPE=Release
         BIN_DIR=bin
       before_install:
-        brew update
+        - brew update
+        - brew install doxygen graphviz
       install:
         brew upgrade cmake
     - os: osx
