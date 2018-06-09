@@ -19,4 +19,7 @@ std::vector<unsigned char>
 pack_16(const std::vector<std::uint16_t>::const_iterator,
         const std::vector<std::uint16_t>::const_iterator);
 
+/// \brief Bat-packs the input dynamically
+std::vector<unsigned char> pack(const std::vector<std::uint16_t>);
+
 #endif /* LZW_SRC_BITPACK_H_ */

@@ -4,7 +4,9 @@
  */
 
 #include "io.hh"
+#include "bitpack.hh"
 #include <array>
+#include <algorithm>
 
 #ifdef Debug
 constexpr bool debug_mode = true;
@@ -71,21 +73,9 @@ void write_file(FILE *const t_out, const vvuint16 &t_text) {
  *  \param t_chunk Chunk to be written to \p t_out
  */
 void write_chunk(FILE *const t_out, const vuint16 &t_chunk) {
-  const auto chunk_size = static_cast<uint16_t>(t_chunk.size());
+  const auto output = pack(t_chunk);
+  const auto chunk_size = static_cast<uint16_t>(output.size());
   fwrite(&chunk_size, sizeof(chunk_size), 1, t_out);
-  std::array<unsigned char, 3> data = {0, 0, 0};
-  for (size_t i = 0; i < t_chunk.size(); ++i) {
-    if (i % 2 == 0) {
-      data[0] = static_cast<unsigned char>(t_chunk[i] >> 4);
-      data[1] = static_cast<unsigned char>(t_chunk[i] << 4);
-    } else {
-      data[1] |= static_cast<unsigned char>(t_chunk[i] >> 8) & 0xC;
-      data[2] = static_cast<unsigned char>(t_chunk[i]);
-      fwrite(data.data(), sizeof(data[0]), 3, t_out);
-      data.fill(0);
-    }
-  }
-  if (t_chunk.size() % 2 != 0) {
-    fwrite(data.data(), sizeof(data[0]), 3, t_out);
-  }
+  fwrite((const char *)(output.data()), sizeof(output[0]), output.size(),
+         t_out);
 }

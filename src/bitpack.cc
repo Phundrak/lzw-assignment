@@ -40,7 +40,7 @@ vuchar pack_n(const vuint16::const_iterator t_input_begin,
   vuchar ret{};
 
   // max value with current number of bits + 1
-  const int max_value = ipow(2, t_n);
+  const int max_value = ipow(2, t_n) - 1;
 
   uchar current_char = 0;
   int step = t_n / 8;
