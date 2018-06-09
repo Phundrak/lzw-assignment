@@ -97,8 +97,8 @@ vuchar pack_16(const vuint16::const_iterator t_input_begin,
 vuchar pack(const vuint16 t_input) {
   vuchar ret{};
   constexpr int max_value = ipow(2, 8);
-  for(auto it = t_input.begin(); it != t_input.end(); ++it) {
-    if(*it >= max_value) {
+  for (auto it = t_input.begin(); it != t_input.end(); ++it) {
+    if (*it >= max_value) {
       const auto next_vec =
           pack_n(static_cast<vuint16::const_iterator>(it), t_input.end(), 9);
       ret.insert(ret.end(), next_vec.begin(), next_vec.end());
