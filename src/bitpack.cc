@@ -50,7 +50,9 @@ vuchar pack_n(const vuint16::const_iterator t_input_begin,
 
   for (auto it = t_input_begin; it != t_input_end; ++it) {
     if (*t_input_end >= max_value) {
-      ret.push_back(current_char);
+      if(current_char != 0) {
+        ret.push_back(current_char);
+      }
       const auto next_vec = pack_n(it, t_input_end, t_n + 1);
       ret.insert(ret.end(), next_vec.begin(), next_vec.end());
       return ret;
