@@ -5,6 +5,7 @@
 
 #include "compress.hh"
 #include "io.hh"
+#include "common.hh"
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -19,22 +20,7 @@ using std::string;
 using dict_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
 using std::printf;
 
-constexpr int ipow(int base, int exp) {
-  int result = 1;
-  for (;;) {
-    if (exp & 1) {
-      result *= base;
-    }
-    exp >>= 1;
-    if (exp == 0) {
-      break;
-    }
-    base *= base;
-  }
-  return result;
-}
-
-constexpr size_t DICT_MAX = ipow(2, 13) - 256; /* 12 bits */
+const size_t DICT_MAX = static_cast<size_t>(ipow(2, 17) - 256); /* 16 bits */
 
 /**
  *  La chaîne de caractères \p t_text est lue caractère par caractère, et est

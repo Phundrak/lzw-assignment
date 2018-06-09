@@ -1,4 +1,5 @@
 #include "bitpack.hh"
+#include "common.hh"
 #include <algorithm>
 #include <cmath>
 
@@ -8,28 +9,13 @@ using uchar = unsigned char;
 using vuint16 = vector<uint16_t>;
 using vuchar = vector<uchar>;
 
-constexpr int ipow(int base, int exp) {
-  int result = 1;
-  for (;;) {
-    if (exp & 1) {
-      result *= base;
-    }
-    exp >>= 1;
-    if (exp == 0) {
-      break;
-    }
-    base *= base;
-  }
-  return result;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //                                  packing                                  //
 ///////////////////////////////////////////////////////////////////////////////
 
 [[nodiscard]] vuchar pack(const vuint16 &t_input) {
   vuchar ret{};
-  constexpr int max_value = ipow(2, 8);
+  const int max_value = ipow(2, 8);
   for (auto it = t_input.begin(); it != t_input.end(); ++it) {
     if (*it >= max_value) {
       const auto next_vec =
@@ -125,7 +111,7 @@ constexpr int ipow(int base, int exp) {
     [[nodiscard]] vuint16 unpack(const vuchar &t_input) {
   vuint16 ret{};
 
-  constexpr int max_value = ipow(2, 8) - 1;
+  const int max_value = ipow(2, 8) - 1;
 
   // begin with 8bits
   for (auto it = t_input.begin(); it != t_input.end(); ++it) {

@@ -10,6 +10,8 @@
 #include <map>
 #include <memory>
 
+int ipow(int, int);
+
 /// \brief Recherche ou ajout de chaine dans le dictionnaire
 std::pair<bool, std::uint16_t>
 dico(std::map<std::pair<std::uint16_t, std::uint8_t>, std::uint16_t> &,

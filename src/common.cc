@@ -11,6 +11,21 @@ using dic_comp_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
 using dic_un_t = std::map<std::uint16_t, std::unique_ptr<std::pair<uint16_t, uint8_t>>>;
 using ustring = std::basic_string<unsigned char>;
 
+int ipow(int base, int exp) {
+  int result = 1;
+  for (;;) {
+    if (exp & 1) {
+      result *= base;
+    }
+    exp >>= 1;
+    if (exp == 0) {
+      break;
+    }
+    base *= base;
+  }
+  return result;
+}
+
 /**
  *  Cette fonction a pour double usage la recherche d’une chaine de caractères
  *  dans le dictionnaire, ou bien l’ajout d’une nouvelle chaîne si celle-ci n’est
