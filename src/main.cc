@@ -83,6 +83,7 @@ std::tuple<string, string, bool> process_args(int t_argc, char *t_argv[]) {
       std::get<2>(ret) = false;
       break;
     case '?':
+      [[fallthrough]];
     default:
       puts("Error: unknown parameter.");
       help();
