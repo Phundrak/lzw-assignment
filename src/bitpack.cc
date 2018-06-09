@@ -68,7 +68,7 @@ vuchar pack_n(const vuint16::const_iterator t_input_begin,
     right_shift -= step;
     if (right_shift < 0) {
       middle_shift = std::abs(right_shift);
-      right_shift = 8 + std::abs(right_shift);
+      right_shift = 8 - std::abs(right_shift);
       if (!zero_right_shift) {
         ret.push_back((*it >> middle_shift) & 0xFF);
       }
