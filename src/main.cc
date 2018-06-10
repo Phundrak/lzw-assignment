@@ -6,10 +6,11 @@
  *
  */
 
-#include "compress.hh"
-#include "getopt.h"
+#include <getopt.h>
 #include <cassert>
 #include <tuple>
+#include "compress.hh"
+#include "uncompress.hh"
 
 using std::printf;
 using std::puts;
@@ -45,7 +46,7 @@ void help() {
   puts("\t-o\tpath to the output file (if the file already exists, it will");
   puts("\t\tbe overwritten). Default: input path + \".lzw\"");
   puts("\t-c\tcompress the input file");
-  puts("\t-d\tdecompresses the input file to the output file. If no output");
+  puts("\t-u\tuncompresses the input file to the output file. If no output");
   puts("\t\tpath has not been entered and if the input file ends with ");
   puts("\t\t\".lzw\", the extension \".lzw\" will be removed; otherwise, the ");
   puts("\t\textension \".uncompresed\" will be added");
@@ -98,14 +99,15 @@ int main(int argc, char *argv[]) {
   const auto [input_path, output_path, compressing] = process_args(argc, argv);
   assert(!input_path.empty());
   if (compressing) {
-    if (output_path.empty()) {
-      compress(input_path, nullptr);
-    } else {
-      compress(input_path, output_path.c_str());
-    }
+    // if (output_path.empty()) {
+    //   compress(input_path, nullptr);
+    // } else {
+    //   compress(input_path, output_path.c_str());
+    // }
+    compress(input_path, (output_path.empty()) ? nullptr : output_path.c_str());
   } else {
-    puts("Not yet implemented :(");
-    /* Inversion des types du dictionnaire pour retrouver les chaînes plus aisément */
+    uncompress(input_path,
+               (output_path.empty()) ? nullptr : output_path.c_str());
   }
   return 0;
 }

@@ -8,7 +8,7 @@
 using std::uint8_t;
 using std::uint16_t;
 using dic_comp_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
-using dic_un_t = std::map<std::uint16_t, std::unique_ptr<std::pair<uint16_t, uint8_t>>>;
+// using dic_un_t = std::map<std::uint16_t, std::unique_ptr<std::pair<uint16_t, uint8_t>>>;
 using ustring = std::basic_string<unsigned char>;
 
 int ipow(int base, int exp) {
@@ -44,8 +44,8 @@ int ipow(int base, int exp) {
  *  \param t_c Caractère suivant la chaine de caractères \p t_nr_chaine
  *  \return const std::pair<bool, uint16_t>
  */
-std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary, uint16_t t_nr_chaine,
-                               uint8_t t_c) {
+std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary,
+                               const uint16_t t_nr_chaine, const uint8_t t_c) {
   if (t_nr_chaine == 0xFFFF) {
     return std::make_pair(true, t_c);
   }
@@ -57,4 +57,20 @@ std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary, uint16_t t_nr_chaine,
                             typename std::remove_reference<decltype(e)>::type>(
                             t_dictionary.size()) +
                         255));
+}
+
+ustring dico_uncompress(std ::map<uint16_t, ustring> &t_dict,
+                                  const uint16_t t_code, const uint16_t t_old) {
+  auto &e = t_dict[t_code];
+  if(e.empty()) {
+    e = t_dict[t_old];
+    const auto temp = e[0];
+    e += temp;
+    return e;
+  }
+
+  auto str = t_dict[t_old];
+  str += str[0];
+  t_dict[static_cast<uint16_t>(t_dict.size())] = std::move(str);
+  return e;
 }

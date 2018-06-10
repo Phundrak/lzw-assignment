@@ -44,6 +44,8 @@ void write_file(FILE *const t_out, const vvuint16 &t_text) {
   }
   fwrite(&size, sizeof(size), 1, t_out);
   for (const auto &chunk : t_text) {
+    if constexpr (debug_mode)
+      std::printf("Chunk!\n");
     write_chunk(t_out, chunk);
   }
 }

@@ -7,6 +7,7 @@
 #define LZW_SRC_BITPACK_H_
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 /// \brief Bat-packs the input dynamically
@@ -24,14 +25,14 @@ pack_16(const std::vector<std::uint16_t>::const_iterator,
         const std::vector<std::uint16_t>::const_iterator);
 
 [[nodiscard]] std::vector<std::uint16_t>
-unpack(const std::vector<unsigned char> &);
+unpack(std::basic_string<unsigned char> &&);
 
 [[nodiscard]] std::vector<std::uint16_t>
-unpack_n(const std::vector<unsigned char>::const_iterator,
-         const std::vector<unsigned char>::const_iterator, const int t_n);
+unpack_n(const std::basic_string<unsigned char>::const_iterator,
+         const std::basic_string<unsigned char>::const_iterator, const int t_n);
 
 [[nodiscard]] std::vector<std::uint16_t>
-unpack_16(const std::vector<unsigned char>::const_iterator,
-          const std::vector<unsigned char>::const_iterator);
+unpack_16(const std::basic_string<unsigned char>::const_iterator,
+          const std::basic_string<unsigned char>::const_iterator);
 
 #endif /* LZW_SRC_BITPACK_H_ */
