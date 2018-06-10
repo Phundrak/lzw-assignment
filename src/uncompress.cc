@@ -26,8 +26,14 @@ using vuint16 = vector<uint16_t>;
   uint16_t code = t_compressed[0];
   std::map<uint16_t, ustring> dict{};
   ret.push_back(static_cast<unsigned char>(code));
+  if constexpr(debug_mode) {
+    std::printf("%d\n", code);
+  }
   old = code;
   for (auto it = t_compressed.begin() + 1; it != t_compressed.end(); ++it) {
+    if constexpr(debug_mode) {
+      std::printf("%d\n", *it);
+    }
     code = *it;
     const auto uncompressed{dico_uncompress(dict, code, old)};
     ret.insert(ret.end(), uncompressed.begin(), uncompressed.end());
@@ -67,8 +73,8 @@ void uncompress(const string &t_input_name, const char *t_output_name) {
 
     auto unpacked = unpack(ustring{chunk, chunk + size_chunk});
     if constexpr(debug_mode) {
-      for(const auto val : unpacked) {
-        std::printf("%d\n", val);
+      for(const auto c : unpacked) {
+        std::printf("%d\n", c);
       }
     }
     const auto uncompressed_chunk = lzw_uncompress(std::move(unpacked));

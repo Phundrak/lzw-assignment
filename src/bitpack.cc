@@ -49,7 +49,7 @@ pack_n(const vuint16::const_iterator t_input_begin,
     if (left_shift >= t_n) {
       left_shift = (left_shift - t_n) + step;
     }
-    ret.push_back((current_char | (*it >> left_shift)) & 0xFF);
+    ret.push_back((current_char | (*it >> left_shift)) & 0xFFu);
     current_char = 0;
 
     bool zero_right_shift = (right_shift == 0);

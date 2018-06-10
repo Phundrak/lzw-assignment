@@ -5,6 +5,13 @@
 
 #include "common.hh"
 
+#ifdef Debug
+constexpr bool debug_mode = true;
+#include <cstdio>
+#else
+constexpr bool debug_mode = false;
+#endif
+
 using std::uint8_t;
 using std::uint16_t;
 using dic_comp_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
@@ -59,18 +66,36 @@ std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary,
                         255));
 }
 
-ustring dico_uncompress(std ::map<uint16_t, ustring> &t_dict,
+ustring dico_uncompress(std::map<uint16_t, ustring> &t_dict,
                                   const uint16_t t_code, const uint16_t t_old) {
-  auto &e = t_dict[t_code];
+  if constexpr(debug_mode) {
+    std::printf("Code: %d\tOld code: %d\n", t_code, t_old);
+  }
+
+  auto e = (t_code < 256) ? ustring{static_cast<unsigned char>(t_code)}
+                          : t_dict[t_code];
+
+  // Si le code n'existe pas
+
   if(e.empty()) {
-    e = t_dict[t_old];
+    e = (t_old < 256) ? ustring{static_cast<unsigned char>(t_old)}
+                      : t_dict[t_old];
     const auto temp = e[0];
     e += temp;
+    t_dict[t_code] = std::move(e);
+    if constexpr(debug_mode) {
+      std::printf("String: %s\n", e.c_str());
+    }
     return e;
   }
 
-  auto str = t_dict[t_old];
+  // auto str = t_dict[t_old];
+  auto str = (t_old < 256) ? ustring{static_cast<unsigned char>(t_old)}
+                           : t_dict[t_old];
   str += str[0];
-  t_dict[static_cast<uint16_t>(t_dict.size())] = std::move(str);
+  t_dict[static_cast<uint16_t>(t_dict.size() + 255)] = std::move(str);
+  if constexpr(debug_mode) {
+    std::printf("String: %s\n", e.c_str());
+  }
   return e;
 }
