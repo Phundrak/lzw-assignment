@@ -12,7 +12,8 @@
 #include <thread>
 
 /// \brief Compression d'une chaine de caractères
-std::vector<std::vector<std::uint16_t>> lzw_compress(std::string &&);
+std::vector<std::vector<std::uint16_t>>
+lzw_compress(std::basic_string<unsigned char> &&);
 
 /// \brief Wrapper de \ref lzw_compress
 void compress(const std::string &, const char *);

@@ -15,7 +15,7 @@ using std::uint8_t;
 using std::vector;
 using vuint16 = vector<uint16_t>;
 using vvuint16 = vector<vuint16>;
-using std::string;
+using ustring = std::basic_string<unsigned char>;
 
 using dict_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
 using std::printf;
@@ -33,7 +33,7 @@ const size_t DICT_MAX = static_cast<size_t>(ipow(2, 17) - 256); /* 16 bits */
  *  \param t_text Chaîne de caractères uint8_t représentant le fichier d'entrée
  *  \return Vecteur de chunks (vecteurs de uint16_t)
  */
-vvuint16 lzw_compress(string &&t_text) {
+vvuint16 lzw_compress(ustring &&t_text) {
   std::puts("Compressing...");
   uint16_t w = 0xFFFF;
   vuint16 chunk{};
@@ -49,7 +49,7 @@ vvuint16 lzw_compress(string &&t_text) {
     if (const auto &[yes, pos] = dico(dict, w, static_cast<uint8_t>(c)); yes) {
       w = pos;
     } else {
-      chunk.push_back(static_cast<uint16_t>(w));
+      chunk.push_back(w);
       w = static_cast<uint16_t>(c);
     }
   }
@@ -70,20 +70,26 @@ vvuint16 lzw_compress(string &&t_text) {
  *  \param[in] t_out_file Chemin vers le fichier de sortie
  */
 void compress(const std::string &t_in_file, const char *t_out_file) {
-  std::ifstream input_file{t_in_file};
-  assert(input_file.is_open());
+  FILE *const input_file = fopen(t_in_file.c_str(), "rb");
+  assert(input_file);
   FILE *const out = (t_out_file != nullptr) ? fopen(t_out_file, "wb")
                                             : fopen("output.lzw", "wb");
   if (out == nullptr) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
               << ": could not open output file. Aborting...\n";
-    input_file.close();
+    // input_file.close();
+    std::fclose(input_file);
     exit(1);
   }
-  const auto compressed_text{
-      lzw_compress(std::string{std::istreambuf_iterator<char>(input_file),
-                               std::istreambuf_iterator<char>()})};
+
+  std::fseek(input_file, 0L, SEEK_END);
+  const auto file_size = static_cast<size_t>(ftell(input_file));
+  std::rewind(input_file);
+
+  auto raw_text = std::make_unique<unsigned char[]>(file_size);
+  std::fread(raw_text.get(), sizeof(unsigned char), file_size, input_file);
+  const auto compressed_text(lzw_compress(ustring{raw_text.get(), &raw_text[file_size]}));
   write_file(out, compressed_text);
   fclose(out);
-  input_file.close();
+  fclose(input_file);
 }

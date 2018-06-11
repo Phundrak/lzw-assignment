@@ -29,7 +29,10 @@ using ustring = std::basic_string<unsigned char>;
  */
 [[nodiscard]] vuchar
 pack_n(const vuint16::const_iterator t_input_begin,
-       const vuint16::const_iterator t_input_end, const int t_n) {
+           const vuint16::const_iterator t_input_end, const int t_n) {
+#ifdef Debug
+  std::printf("%d bits!\n", t_n);
+#endif
   if (t_n == 16) {
     return pack_16(t_input_begin, t_input_end);
   }
