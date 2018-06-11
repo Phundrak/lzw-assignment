@@ -1,6 +1,7 @@
 #ifndef LZW_SRC_UNCOMPRESS_H_
 #define LZW_SRC_UNCOMPRESS_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 

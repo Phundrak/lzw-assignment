@@ -3,13 +3,6 @@
 #include <cmath>
 #include <algorithm>
 
-#ifdef Debug
-#include <cstdio>
-constexpr bool debug = true;
-#else
-constexpr bool debug = false;
-#endif
-
 using std::uint16_t;
 using std::vector;
 using uchar = unsigned char;
@@ -128,37 +121,25 @@ uint16_t mask_n(int t_nb_bits) {
   vuint16 ret{};
   const uint16_t mask = mask_n(t_n);
   const int max_value = ipow(2, t_n);
-  for (auto it = t_begin; it < t_end;) {
+  for (auto it = t_begin; it < t_end - 1; /* nope */) {
     uint16_t current_char = 0;
     // left bits
     left_shift =
         ((left_shift += step) >= t_n) ? (left_shift - t_n) + step : left_shift;
     current_char = static_cast<uint16_t>(*it << left_shift);
-    if constexpr(debug) {
-      std::printf("left:\t%d\t", left_shift);
-    }
     // right bits
     bool zero_rs = right_shift;
     right_shift -= step;
     if (right_shift < 0) {
       // optional middle bits before right bits
       if (zero_rs) {
-        current_char |= *(++it) << std::abs(right_shift);
-        if constexpr(debug) {
-          std::printf("middle:\t%d\t", std::abs(right_shift));
-        }
+        current_char |= *++it << std::abs(right_shift);
       }
       right_shift = 8 - std::abs(right_shift);
     }
     current_char |= *(++it) >> right_shift;
-    if constexpr(debug) {
-      std::printf("right\t%d\t", right_shift);
-    }
     // char made!
     ret.push_back(current_char &= mask);
-    if constexpr(debug) {
-      std::printf("value:\t%d\n", current_char);
-    }
     if(right_shift == 0) {
       ++it;
     }

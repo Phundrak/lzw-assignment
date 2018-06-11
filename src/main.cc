@@ -99,11 +99,6 @@ int main(int argc, char *argv[]) {
   const auto [input_path, output_path, compressing] = process_args(argc, argv);
   assert(!input_path.empty());
   if (compressing) {
-    // if (output_path.empty()) {
-    //   compress(input_path, nullptr);
-    // } else {
-    //   compress(input_path, output_path.c_str());
-    // }
     compress(input_path, (output_path.empty()) ? nullptr : output_path.c_str());
   } else {
     uncompress(input_path,
