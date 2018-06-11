@@ -14,7 +14,7 @@ using std::vector;
 using ustring = std::basic_string<unsigned char>;
 using vuint16 = vector<uint16_t>;
 
-[[nodiscard]] ustring lzw_uncompress(vuint16 &&t_compressed) {
+ustring lzw_uncompress(vuint16 &&t_compressed) {
   ustring ret{};
   uint16_t old = 0;
 

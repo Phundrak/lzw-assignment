@@ -29,7 +29,7 @@ using vvuint16 = vector<vuint16>;
  *    taille des chunks\n
  *  \n
  *  Un chunk est composé de la manière qui suit :\n
- *  - Sur deux octets sont écrit un `uint16_t` déterminant le nombre d’octets
+ *  - Sur deux octets sont écrit un `uint32_t` déterminant le nombre d’octets
  *    composant le chunk\n
  *  - Sur le nombre d’octets précisés par le header du chunk se trouvent les
  *    données compressées par l’algorithme lzw puis via bit-packing.\n
@@ -59,7 +59,7 @@ void write_file(FILE *const t_out, const vvuint16 &t_text) {
  */
 void write_chunk(FILE *const t_out, const vuint16 &t_chunk) {
   const auto output = pack(t_chunk);
-  const auto chunk_size = static_cast<uint16_t>(output.size());
+  const auto chunk_size = static_cast<uint32_t>(output.size());
   fwrite(&chunk_size, sizeof(chunk_size), 1, t_out);
   fwrite(output.data(), sizeof(output[0]), output.size(), t_out);
 }

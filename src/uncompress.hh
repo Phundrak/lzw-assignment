@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-[[nodiscard]] std::basic_string<unsigned char>
+std::basic_string<unsigned char>
 lzw_uncompress(std::vector<std::uint16_t> &&);
 
 void uncompress(const std::string &, const char*);

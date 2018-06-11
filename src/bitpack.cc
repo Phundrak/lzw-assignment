@@ -14,7 +14,7 @@ using ustring = std::basic_string<unsigned char>;
 //                                  packing                                  //
 ///////////////////////////////////////////////////////////////////////////////
 
-[[nodiscard]] vuchar pack(const vuint16 &t_input) {
+vuchar pack(const vuint16 &t_input) {
   return pack_n(t_input.begin(), t_input.end(), 9);
 }
 
@@ -27,9 +27,8 @@ using ustring = std::basic_string<unsigned char>;
  * \param t_n maximum size of an input value in bits \return Returns a
  * vector of unsigned char containing the packed values from t_input
  */
-[[nodiscard]] vuchar
-pack_n(const vuint16::const_iterator t_input_begin,
-           const vuint16::const_iterator t_input_end, const int t_n) {
+vuchar pack_n(const vuint16::const_iterator t_input_begin,
+              const vuint16::const_iterator t_input_end, const int t_n) {
 #ifdef Debug
   std::printf("%d bits!\n", t_n);
 #endif
@@ -87,8 +86,8 @@ pack_n(const vuint16::const_iterator t_input_begin,
   return ret;
 }
 
-[[nodiscard]] vuchar pack_16(const vuint16::const_iterator t_input_begin,
-                             const vuint16::const_iterator t_input_end) {
+vuchar pack_16(const vuint16::const_iterator t_input_begin,
+               const vuint16::const_iterator t_input_end) {
   vuchar ret{};
   std::for_each(t_input_begin, t_input_end, [&](const auto value) {
     ret.push_back((value >> 8) & 0xFF);
@@ -102,7 +101,7 @@ pack_n(const vuint16::const_iterator t_input_begin,
 ///////////////////////////////////////////////////////////////////////////////
 
 uint16_t mask_n(int t_nb_bits) {
-  if(t_nb_bits == 0) {
+  if (t_nb_bits == 0) {
     return 0;
   }
   uint16_t mask = mask_n(t_nb_bits - 1);
@@ -111,13 +110,12 @@ uint16_t mask_n(int t_nb_bits) {
   return mask;
 }
 
-[[nodiscard]] vuint16 unpack(ustring &&t_input) {
+vuint16 unpack(ustring &&t_input) {
   return unpack_n(t_input.begin(), t_input.end(), 9);
 }
 
-[[nodiscard]] vuint16 unpack_n(const ustring::const_iterator t_begin,
-                               const ustring::const_iterator t_end,
-                               const int t_n) {
+vuint16 unpack_n(const ustring::const_iterator t_begin,
+                 const ustring::const_iterator t_end, const int t_n) {
   int step = t_n / 8;
   int left_shift = 0;
   int right_shift = 0;
@@ -143,7 +141,7 @@ uint16_t mask_n(int t_nb_bits) {
     current_char |= *(++it) >> right_shift;
     // char made!
     ret.push_back(current_char &= mask);
-    if(right_shift == 0) {
+    if (right_shift == 0) {
       ++it;
     }
     if (current_char >= max_value) {
@@ -155,8 +153,8 @@ uint16_t mask_n(int t_nb_bits) {
   return ret;
 }
 
-[[nodiscard]] vuint16 unpack_16(const ustring::const_iterator t_begin,
-                                const ustring::const_iterator t_end) {
+vuint16 unpack_16(const ustring::const_iterator t_begin,
+                  const ustring::const_iterator t_end) {
   vuint16 ret{};
   for (auto it = t_begin; it < t_end; ++it) {
     ret.push_back(static_cast<uint16_t>((*it << 8) | *(++it)));
