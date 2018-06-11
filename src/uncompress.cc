@@ -17,24 +17,12 @@ using vuint16 = vector<uint16_t>;
 ustring lzw_uncompress(vuint16 &&t_compressed) {
   ustring ret{};
   uint16_t old = 0;
-
-  // [1]
   std::map<uint16_t, ustring> dict{};
-
-  // [2]
   uint16_t v = t_compressed[0];
-
-  // [3]
   ret.append({static_cast<unsigned char>(v)});
-
-  // [4]
   old = v;
-
   for (auto it = t_compressed.begin() + 1; it != t_compressed.end(); ++it) {
-    // [5]
     v = *it;
-
-    // [6]
     const auto uncompressed{dico_uncompress(dict, v, old)};
     ret.insert(ret.end(), uncompressed.begin(), uncompressed.end());
     old = v;
@@ -58,7 +46,7 @@ void uncompress(const string &t_input_name, const char *t_output_name) {
   std::fread(&nb_chunks, sizeof(nb_chunks), 1, input);
 
   for (uint16_t i = 0; i < nb_chunks; ++i) {
-    uint16_t size_chunk = 0;
+    uint32_t size_chunk = 0;
     fread(&size_chunk, sizeof(size_chunk), 1, input);
     auto *chunk = static_cast<unsigned char *>(
         std::malloc(sizeof(unsigned char) * size_chunk));
