@@ -10,6 +10,10 @@ using vuint16 = vector<uint16_t>;
 using vuchar = vector<uchar>;
 using ustring = std::basic_string<unsigned char>;
 
+int max(const int t_n) {
+  return ipow(2, t_n) - 1;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //                                  packing                                  //
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,7 +36,7 @@ vuchar pack_n(const vuint16::const_iterator t_input_begin,
   if (t_n == 16) {
     return pack_16(t_input_begin, t_input_end);
   }
-  const int max_value = ipow(2, t_n) - 1; // max value held within t_n bits
+  const int max_value = max(t_n); // max value held within t_n bits
 
 #ifdef Debug
   std::printf("%d bits! %ld chars remaining\n", t_n,
@@ -141,7 +145,7 @@ vuint16 unpack_n(const ustring::const_iterator t_begin,
   int left_shift = 0;
   int right_shift = 0;
   vuint16 ret{};
-  const int max_value = ipow(2, t_n);
+  const int max_value = max(t_n);
   for (auto it = t_begin; it < t_end - 1; /* nope */) {
     uint16_t current_char = 0;
     // left bits
