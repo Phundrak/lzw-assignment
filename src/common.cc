@@ -65,9 +65,6 @@ ustring dico_uncompress(std::map<uint16_t, ustring> &t_dict,
                         const uint16_t t_code, const uint16_t t_old) {
   // le code existe dans le dictionnaire s’il est < 256
   if (t_code < 256) {
-#ifdef Debug
-    std::printf("Code : %d\tNOT EMPTY\n", t_code);
-#endif
     ustring e{static_cast<unsigned char>(t_code)};
     // 256 car on n'a pas encore tenté d'insérer de nouveau caractère
     if (t_old < 256) {
@@ -85,19 +82,13 @@ ustring dico_uncompress(std::map<uint16_t, ustring> &t_dict,
 
   // le code existe dans le dictionnaire
   if (!e.empty()) {
-#ifdef Debug
-    std::printf("Code : %d\tNOT EMPTY\n", t_code);
-#endif
     str += e[0];
-    const uint16_t index = static_cast<uint16_t>(t_dict.size() + 256);
+    const auto index = static_cast<uint16_t>(t_dict.size() + 256);
     t_dict[index] = str;
     return e;
   }
 
   // le code n'existe pas encore dans le dictionnaire
-#ifdef Debug
-  std::printf("Code : %d\tEMPTY\n", t_code);
-#endif
   str += str[0];
   e = str;
   t_dict[t_code] = e;

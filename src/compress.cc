@@ -77,7 +77,6 @@ void compress(const std::string &t_in_file, const char *t_out_file) {
   if (out == nullptr) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
               << ": could not open output file. Aborting...\n";
-    // input_file.close();
     std::fclose(input_file);
     exit(1);
   }
