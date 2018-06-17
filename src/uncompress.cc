@@ -24,6 +24,9 @@ ustring lzw_uncompress(vuint16 &&t_compressed) {
   for (auto it = t_compressed.begin() + 1; it != t_compressed.end(); ++it) {
     v = *it;
     const auto uncompressed{dico_uncompress(dict, v, old)};
+#ifdef Debug
+    std::printf("%d = %s\n", v, uncompressed.c_str());
+#endif
     ret.insert(ret.end(), uncompressed.begin(), uncompressed.end());
     old = v;
   }
