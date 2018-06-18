@@ -38,18 +38,24 @@ using uvec = std::vector<uint32_t>;         // chaine encodée
  */
 void help() {
   puts("Usage:");
-  puts("lzw  [-options] [-i path] [-o path]");
-  puts("\tThe default action is to compress the input file to a .lzw file");
-  puts("\tin which the directory in which the software is executed.");
-  puts("\tOptions available:");
-  puts("\t-i\tpath to the input file (mandatory)");
-  puts("\t-o\tpath to the output file (if the file already exists, it will");
-  puts("\t\tbe overwritten). Default: input path + \".lzw\"");
-  puts("\t-c\tcompress the input file");
-  puts("\t-u\tuncompresses the input file to the output file. If no output");
-  puts("\t\tpath has not been entered and if the input file ends with ");
-  puts("\t\t\".lzw\", the extension \".lzw\" will be removed; otherwise, the ");
-  puts("\t\textension \".uncompresed\" will be added");
+  puts("lzw  [-options] [-i path] [-o path]\n");
+  puts("The default action is to compress the input file to a .lzw file");
+  puts("in which the directory in which the software is executed.");
+  puts("Options available:");
+  puts("-h --help");
+  puts("\tdisplay the current message");
+  puts("-i --input");
+  puts("\tpath to the input file (MANDATORY)");
+  puts("-o --output");
+  puts("\tpath to the output file (if the file already exists, it will be\n");
+  puts("\toverwritten). Default: input path + \".lzw\"");
+  puts("-c --compress");
+  puts("\tcompress the input file");
+  puts("-u --uncompress");
+  puts("\tuncompresses the input file to the output file. If no output path");
+  puts("\thas not been entered and if the input file ends with \".lzw\",");
+  puts("\tthe extension \".lzw\" will be removed; otherwise, the extension");
+  puts("\t\"_uncompresed\" will be added");
 }
 
 std::tuple<string, string, bool> process_args(int t_argc, char *t_argv[]) {
