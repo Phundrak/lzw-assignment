@@ -53,7 +53,7 @@ void help() {
 }
 
 std::tuple<string, string, bool> process_args(int t_argc, char *t_argv[]) {
-  auto ret = std::make_tuple(string{}, string{}, false);
+  auto ret = std::make_tuple(string{}, string{}, true);
   while (true) {
     int option_index = 0;
     static struct option long_options[] = {
