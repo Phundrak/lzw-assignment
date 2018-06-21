@@ -6,11 +6,11 @@
  *
  */
 
-#include <getopt.h>
-#include <cassert>
-#include <tuple>
 #include "compress.hh"
 #include "uncompress.hh"
+#include <cassert>
+#include <getopt.h>
+#include <tuple>
 
 using std::printf;
 using std::puts;
@@ -70,7 +70,8 @@ std::tuple<string, string, bool> process_args(int t_argc, char *t_argv[]) {
         {"uncompress", no_argument, nullptr, 'u'},
         {nullptr, 0, nullptr, 0}};
     int c = getopt_long(t_argc, t_argv, "hi:o:cu", long_options, &option_index);
-    if (c == -1) break;
+    if (c == -1)
+      break;
     switch (c) {
     case 0:
       break;

@@ -4,11 +4,13 @@
  */
 
 #include "compress.hh"
-#include "io.hh"
 #include "common.hh"
+#include "io.hh"
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
+#include <iterator>
+using std::ios;
 using std::string;
 using std::uint16_t;
 using std::uint8_t;
@@ -20,7 +22,20 @@ using ustring = std::basic_string<unsigned char>;
 using dict_t = std::map<std::pair<uint16_t, uint8_t>, uint16_t>;
 using std::printf;
 
-const size_t DICT_MAX = static_cast<size_t>(ipow(2, 17) - 256); /* 16 bits */
+ustring read_file(const string &filename) {
+  std::ifstream file{filename, ios::binary};
+  assert(file);
+  file.unsetf(ios::skipws);
+  file.seekg(0, ios::end);
+  const auto file_size = file.tellg();
+  file.seekg(0, ios::beg);
+  ustring res{};
+  res.reserve(file_size);
+  res.insert(res.begin(), std::istream_iterator<unsigned char>(file),
+             std::istream_iterator<unsigned char>());
+  file.close();
+  return res;
+}
 
 /**
  *  La chaîne de caractères \p t_text est lue caractère par caractère, et est
@@ -35,6 +50,7 @@ const size_t DICT_MAX = static_cast<size_t>(ipow(2, 17) - 256); /* 16 bits */
  */
 vvuint16 lzw_compress(ustring &&t_text) {
   std::puts("Compressing...");
+  const auto DICT_MAX = static_cast<size_t>(ipow(2, 17) - 256); /* 16 bits */
   uint16_t w = 0xFFFF;
   vuint16 chunk{};
   vvuint16 res{};
@@ -46,7 +62,8 @@ vvuint16 lzw_compress(ustring &&t_text) {
       dict = dict_t{};
       w = 0xFFFF;
     }
-    if (const auto &[yes, pos] = dico(dict, w, static_cast<uint8_t>(c)); yes) {
+    if (const auto &[exists, pos] = dico(dict, w, static_cast<uint8_t>(c));
+        exists) {
       w = pos;
     } else {
       chunk.push_back(w);
@@ -70,25 +87,14 @@ vvuint16 lzw_compress(ustring &&t_text) {
  *  \param[in] t_out_file Chemin vers le fichier de sortie
  */
 void compress(const std::string &t_in_file, const char *t_out_file) {
-  FILE *const input_file = fopen(t_in_file.c_str(), "rb");
-  assert(input_file);
-  FILE *const out = (t_out_file != nullptr) ? fopen(t_out_file, "wb")
-                                            : fopen("output.lzw", "wb");
-  if (out == nullptr) {
+  std::ofstream out{(t_out_file != nullptr) ? t_out_file : "output.lzw",
+                    std::ios::out | std::ios::binary};
+  if (!out.is_open()) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
               << ": could not open output file. Aborting...\n";
-    std::fclose(input_file);
     exit(1);
   }
-
-  std::fseek(input_file, 0L, SEEK_END);
-  const auto file_size = static_cast<size_t>(ftell(input_file));
-  std::rewind(input_file);
-
-  auto raw_text = std::make_unique<unsigned char[]>(file_size);
-  std::fread(raw_text.get(), sizeof(unsigned char), file_size, input_file);
-  const auto compressed_text(lzw_compress(ustring{raw_text.get(), &raw_text[file_size]}));
+  const auto compressed_text(lzw_compress(read_file(t_in_file)));
   write_file(out, compressed_text);
-  fclose(out);
-  fclose(input_file);
+  out.close();
 }

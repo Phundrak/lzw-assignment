@@ -40,9 +40,9 @@ int ipow(int base, int exp) {
  * valeur numérique de la chaîne dans le dictionnaire.
  *
  *  \param t_dictionary Dictionnaire
- *  \param t_nr_chaine Numéro de la chaine précédant le caractères \p t_c dans \p t_dictionary
- *  \param t_c Caractère suivant la chaine de caractères \p t_nr_chaine
- *  \return const std::pair<bool, uint16_t>
+ *  \param t_nr_chaine Numéro de la chaine précédant le caractères \p t_c dans
+ * \p t_dictionary \param t_c Caractère suivant la chaine de caractères \p
+ * t_nr_chaine \return const std::pair<bool, uint16_t>
  */
 std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary,
                                const uint16_t t_nr_chaine, const uint8_t t_c) {

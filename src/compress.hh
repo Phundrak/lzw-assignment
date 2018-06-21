@@ -7,9 +7,9 @@
 #define LZW_SRC_COMPRESS_H_
 
 #include "common.hh"
-#include <vector>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 /// \brief Compression d'une chaine de caractères
 std::vector<std::vector<std::uint16_t>>
