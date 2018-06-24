@@ -37,7 +37,7 @@ void uncompress(const string &t_input_name, const char *t_output_name) {
   std::ofstream output{(t_output_name != nullptr)
                            ? t_output_name
                            : t_input_name + "_uncompressed",
-                       std::ios::out | std::ios::binary | std::ios::app};
+                       std::ios::out | std::ios::binary};
   assert(output.is_open());
   uint16_t nb_chunks = 0;
   std::fread(&nb_chunks, sizeof(nb_chunks), 1, input);
