@@ -48,9 +48,6 @@ void write_file(std::ofstream &t_out, const vvuint16 &t_chunks) {
  *  \param t_chunk Chunk to be written to \p t_out
  */
 void write_chunk(std::ofstream &t_out, const vuint16 &t_chunk) {
-#ifdef Debug
-  std::printf("Chunk!\n");
-#endif
   const auto output = pack(t_chunk);
   const auto chunk_size = static_cast<uint32_t>(output.size());
   t_out.write(reinterpret_cast<const char *>(&chunk_size), sizeof(chunk_size));

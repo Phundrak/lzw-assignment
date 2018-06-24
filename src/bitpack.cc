@@ -48,9 +48,6 @@ vuchar pack(const vuint16 &t_input) {
 vuchar pack_n(const vuint16::const_iterator t_input_begin,
               const vuint16::const_iterator t_input_end, vuchar &t_res,
               int t_n) {
-#ifdef Debug
-  std::printf("%d bits!\n", t_n);
-#endif // Debug
   if (t_n == 16) {
     return pack_16(t_input_begin, t_input_end, t_res);
   }

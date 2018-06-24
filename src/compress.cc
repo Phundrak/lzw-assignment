@@ -37,30 +37,18 @@ ustring read_file(const string &filename) {
   return res;
 }
 
-/**
- *  La chaîne de caractères \p t_text est lue caractère par caractère, et est
- * selon la valeur de retour de la fonction \ref dico (permettant dans le même
- * temps la création du dictionnaire), on rajoute ou non un nouveau caractère
- * encodé sur 12bits dans le chunk courant. Dès que le dictionnaire est plein
- * (2^12 caractères), le chunk est sauvegardé et vidé, et le dictionnaire est
- * réinitialisé.
- *
- *  \param t_text Chaîne de caractères uint8_t représentant le fichier d'entrée
- *  \return Vecteur de chunks (vecteurs de uint16_t)
- */
 vvuint16 lzw_compress(ustring &&t_text) {
-  std::puts("Compressing...");
-  const auto DICT_MAX = static_cast<size_t>(ipow(2, 17) - 256); /* 16 bits */
+  vvuint16 res{};
+  const auto DICT_MAX = static_cast<size_t>(ipow(2, 14) - 256); /* 16 bits */
   uint16_t w = 0xFFFF;
   vuint16 chunk{};
-  vvuint16 res{};
   dict_t dict{};
   for (const auto c : t_text) {
     if (dict.size() >= DICT_MAX) {
-      res.push_back(std::move(chunk));
-      chunk = vuint16{};
-      dict = dict_t{};
+      res.push_back(chunk);
       w = 0xFFFF;
+      chunk.clear();
+      dict.clear();
     }
     if (const auto &[exists, pos] = dico(dict, w, static_cast<uint8_t>(c));
         exists) {
@@ -88,7 +76,7 @@ vvuint16 lzw_compress(ustring &&t_text) {
  */
 void compress(const std::string &t_in_file, const char *t_out_file) {
   std::ofstream out{(t_out_file != nullptr) ? t_out_file : "output.lzw",
-                    std::ios::out | std::ios::binary};
+                    ios::out | ios::binary};
   if (!out.is_open()) {
     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ - 4
               << ": could not open output file. Aborting...\n";
