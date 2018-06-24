@@ -5,5 +5,4 @@ jobs:
       - image: purplekarrot/gcc-8
     steps:
       - checkout
-      - run: apt-get update && apt-get install -y doxygen doxygen-docs doxygen-latex doxygen-gui graphviz
       - run: cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j
