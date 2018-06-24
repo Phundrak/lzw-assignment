@@ -1,8 +1,3 @@
-/**
- *   \file common.cc
- *   \brief Implementation for functions in common
- */
-
 #include "common.hh"
 
 using std::uint16_t;
@@ -26,24 +21,6 @@ int ipow(int base, int exp) {
   return result;
 }
 
-/**
- *  Cette fonction a pour double usage la recherche d’une chaine de caractères
- *  dans le dictionnaire, ou bien l’ajout d’une nouvelle chaîne si celle-ci
- * n’est pas déjà présente. Une chaine de caractères est représentée par un
- * couple numéro de chaine / caractère, le numéro de chaine renvoyant au
- * caractère précédent (soit son code ASCII, soit son indice dans le
- * dictionnaire) et le caractère se référant au dernier caractère de la chaine
- * courante. Si le numéro de chaine est -1, alors il s’agit du premier caractère
- * de la chaine, et la valeur renvoyée sera la valeur ASCII du caractère. La
- * fonction renvoie une paire bool/uint16_t, la valeur booléene indiquant si une
- * nouvelle fut ajoutée dans le dictionnaire ou non, et le uint16_t indiquant la
- * valeur numérique de la chaîne dans le dictionnaire.
- *
- *  \param t_dictionary Dictionnaire
- *  \param t_nr_chaine Numéro de la chaine précédant le caractères \p t_c dans
- * \p t_dictionary \param t_c Caractère suivant la chaine de caractères \p
- * t_nr_chaine \return const std::pair<bool, uint16_t>
- */
 std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary,
                                const uint16_t t_nr_chaine, const uint8_t t_c) {
   if (t_nr_chaine == 0xFFFF) {
@@ -55,12 +32,6 @@ std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary,
                                                t_dictionary.size() + 255)));
 }
 
-/**
- *  Detailed description
- *
- *  \param t_dict Dictionnaire
- *  \return Retourne une chaîne de caractères non signés
- */
 ustring dico_uncompress(std::map<uint16_t, ustring> &t_dict,
                         const uint16_t t_code, const uint16_t t_old) {
   // le code existe dans le dictionnaire s’il est < 256

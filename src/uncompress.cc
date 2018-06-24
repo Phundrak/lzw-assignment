@@ -55,9 +55,6 @@ void uncompress_chunk(FILE *const t_input, std::ofstream &t_output) {
   fread(chunk.get(), sizeof(unsigned char), size_chunk, t_input);
   auto unpacked = unpack(ustring{chunk.get(), chunk.get() + size_chunk});
   auto uncompressed_chunk = lzw_uncompress(std::move(unpacked));
-
-  // attention here for bug ///////////////////////////////////////////////////
-  uncompressed_chunk.push_back(0xFF);
   t_output.write(reinterpret_cast<const char *>(uncompressed_chunk.data()),
                  sizeof(uncompressed_chunk[0]) * uncompressed_chunk.size());
 }

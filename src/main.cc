@@ -1,11 +1,3 @@
-/**
- *   \file main.cc
- *   \brief Main file
- *
- *
- *
- */
-
 #include "compress.hh"
 #include "uncompress.hh"
 #include <cassert>
@@ -19,23 +11,10 @@ using std::tuple;
 
 // custom types ///////////////////////////////////////////////////////////////
 
-/*
-  Dictionnaire :
-  <
-      <
-          numéro chaine précédente,
-          caractère ASCII
-      >
-      numéro chaine courante
-  >
- */
 using dic_t = std::map<std::pair<uint32_t, uint8_t>, uint32_t>;
 using ustring = std::basic_string<uint8_t>; // chaine non encodée
 using uvec = std::vector<uint32_t>;         // chaine encodée
 
-/**
- *  \brief Affichage d’aide
- */
 void help() {
   puts("Usage:");
   puts("lzw  [-options] [-i path] [-o path]\n");
@@ -101,7 +80,6 @@ std::tuple<string, string, bool> process_args(int t_argc, char *t_argv[]) {
   return ret;
 }
 
-/* TODO: compression multiple : nombre de compressions puis fichier compressé */
 int main(int argc, char *argv[]) {
   const auto [input_path, output_path, compressing] = process_args(argc, argv);
   assert(!input_path.empty());

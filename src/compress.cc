@@ -1,8 +1,3 @@
-/**
- *   \file compress.cc
- *   \brief Implementation of compression
- */
-
 #include "compress.hh"
 #include "common.hh"
 #include "io.hh"
@@ -41,10 +36,14 @@ vvuint16 lzw_compress(ustring &&t_text) {
   vvuint16 res{};
   const auto DICT_MAX = static_cast<size_t>(ipow(2, 14) - 256); /* 16 bits */
   uint16_t w = 0xFFFF;
+  bool pushed = false;
   vuint16 chunk{};
   dict_t dict{};
   for (const auto c : t_text) {
     if (dict.size() >= DICT_MAX) {
+      if (w != 0xFFFF) {
+        chunk.push_back(w);
+      }
       res.push_back(chunk);
       w = 0xFFFF;
       chunk.clear();
@@ -53,9 +52,11 @@ vvuint16 lzw_compress(ustring &&t_text) {
     if (const auto &[exists, pos] = dico(dict, w, static_cast<uint8_t>(c));
         exists) {
       w = pos;
+      pushed = false;
     } else {
       chunk.push_back(w);
       w = static_cast<uint16_t>(c);
+      pushed = true;
     }
   }
   if (w != 0xFFFF) {
@@ -65,15 +66,6 @@ vvuint16 lzw_compress(ustring &&t_text) {
   return res;
 }
 
-/**
- *  Wrapper de la fonction \ref lzw_compress gérant l'ouverture, la lecture,
- *  l'écriture et la fermeture des fichiers d’entrée et de sortie. Si \p
- *  t_out_file est nul (chemin non spécifié), il prendra alors la valeur de
- *  \p t_in_file à laquelle sera annexé l’extension `.lzw`.
- *
- *  \param[in] t_in_file Chemin vers le fichier d’entrée
- *  \param[in] t_out_file Chemin vers le fichier de sortie
- */
 void compress(const std::string &t_in_file, const char *t_out_file) {
   std::ofstream out{(t_out_file != nullptr) ? t_out_file : "output.lzw",
                     ios::out | ios::binary};

@@ -36,15 +36,6 @@ vuchar pack(const vuint16 &t_input) {
   return pack_n(t_input.begin(), t_input.end(), vec, 9);
 }
 
-/**
- *  Packs \p t_input into unsigned char, assuming  the max value of t_input
- * only takes \p t_n bits
- *
- *  \param t_input_begin pointer to the beginning of the vector of values to be
- * packed \param t_input_end pointer to the end of the input vector \param t_n
- * maximum size of an input value in bits \return Returns a vector of unsigned
- * char containing the packed values from t_input
- */
 vuchar pack_n(const vuint16::const_iterator t_input_begin,
               const vuint16::const_iterator t_input_end, vuchar &t_res,
               int t_n) {
