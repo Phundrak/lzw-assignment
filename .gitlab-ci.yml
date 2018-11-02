@@ -1,0 +1,7 @@
+image: rikorose/gcc-cmake:latest
+stages:
+  - build
+build:
+  stage: build
+  script:
+    - mkdir -p build bin && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j
