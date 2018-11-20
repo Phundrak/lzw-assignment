@@ -45,5 +45,4 @@ matrix:
 
 script:
     - make $BUILD_TYPE
-    - sonar-scanner -Dsonar.projectKey=Phundrak_lzw-assignment -Dsonar.sources=./src/ -Dsonar.cfamily.build-wrapper-output=bw-output 
-    -Dsonar.host.url=https://sonarcloud.io
+    - sonar-scanner -Dsonar.projectKey=Phundrak_lzw-assignment -Dsonar.sources=./src/ -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io
