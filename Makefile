@@ -1,3 +1,6 @@
+all:
+	@mkdir -p build
+	@cd build && pwd && cmake -DCMAKE_BUILD_TYPE=Release .. && make
 release:
 	@mkdir -p build
 	@cd build && pwd && cmake -DCMAKE_BUILD_TYPE=Release .. && make

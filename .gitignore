@@ -3,3 +3,7 @@
 gmon\.out
 
 *.lzw
+
+\.scannerwork/
+
+bw-output/
