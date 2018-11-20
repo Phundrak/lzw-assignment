@@ -17,6 +17,8 @@ addons:
         packages:
             - g++-7
             - clang-5.0
+cache:
+    apt: true
 matrix:
   include:
     # Linux Clang C++17
