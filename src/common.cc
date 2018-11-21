@@ -27,9 +27,10 @@ std::pair<bool, uint16_t> dico(dic_comp_t &t_dictionary,
     return std::make_pair(true, t_c);
   }
   auto &e = t_dictionary[std::make_pair(t_nr_chaine, t_c)];
-  return (e != 0) ? std::make_pair(true, e)
-                  : std::make_pair(false, (e = static_cast<uint16_t>(
-                                               t_dictionary.size() + 255)));
+  if(e != 0)
+    return std::make_pair(true, e);
+  e = static_cast<uint16_t>(t_dictionary.size() + 255);
+  return std::make_pair(false, e);
 }
 
 ustring dico_uncompress(std::map<uint16_t, ustring> &t_dict,

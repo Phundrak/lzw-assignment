@@ -36,7 +36,6 @@ vvuint16 lzw_compress(ustring &&t_text) {
   vvuint16 res{};
   const auto DICT_MAX = static_cast<size_t>(ipow(2, 14) - 256); /* 16 bits */
   uint16_t w = 0xFFFF;
-  bool pushed = false;
   vuint16 chunk{};
   dict_t dict{};
   for (const auto c : t_text) {
@@ -52,11 +51,9 @@ vvuint16 lzw_compress(ustring &&t_text) {
     if (const auto &[exists, pos] = dico(dict, w, static_cast<uint8_t>(c));
         exists) {
       w = pos;
-      pushed = false;
     } else {
       chunk.push_back(w);
       w = static_cast<uint16_t>(c);
-      pushed = true;
     }
   }
   if (w != 0xFFFF) {

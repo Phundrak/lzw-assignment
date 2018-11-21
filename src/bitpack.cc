@@ -65,13 +65,11 @@ vuchar pack_n(const vuint16::const_iterator t_input_begin,
       bool zero_rs = (right_shift == 0);
 
       right_shift -= step;
-      if (right_shift < 0) { // si right_shift est inférieur à zéro
+      if (right_shift < 0 && !zero_rs) {
+        // si right_shift est inférieur à zéro
         // si right_shift était différent de zéro, alors extra octet
-        if (!zero_rs) {
-          current_char =
-              static_cast<uchar>(masks[t_n] >> (-right_shift) & 0xffu);
-          t_res.push_back(current_char);
-        }
+        current_char = static_cast<uchar>(masks[t_n] >> (-right_shift) & 0xFFU);
+        t_res.push_back(current_char);
       }
       t_res.push_back(static_cast<uchar>(masks[t_n]));
       return pack_n(it, t_input_end, t_res, t_n + 1);
@@ -82,25 +80,24 @@ vuchar pack_n(const vuint16::const_iterator t_input_begin,
       left_shift = (left_shift - t_n) + step;
     }
     t_res.push_back(
-        static_cast<uchar>(current_char | (*it >> left_shift & 0xFFu)));
-    // current_char = 0;
+        static_cast<uchar>(current_char | (*it >> left_shift & 0xFFU)));
 
     bool zero_rs = (right_shift == 0);
     right_shift -= step;
     if (right_shift < 0) {
       if (!zero_rs) {
-        current_char = static_cast<uchar>(*it >> (-right_shift) & 0xFFu);
+        current_char = static_cast<uchar>(*it >> (-right_shift) & 0xFFU);
         t_res.push_back(current_char);
       }
       right_shift = 8 + right_shift;
     }
     if (right_shift == 0) {
-      current_char = static_cast<uchar>(*it & 0xffu);
+      current_char = static_cast<uchar>(*it & 0xFFU);
       t_res.push_back(current_char);
       current_char = 0;
       char_touched = false;
     } else {
-      current_char = static_cast<uchar>(*it << right_shift & 0xFFu);
+      current_char = static_cast<uchar>(*it << right_shift & 0xFFU);
       char_touched = true;
     }
   }
@@ -112,9 +109,9 @@ vuchar pack_n(const vuint16::const_iterator t_input_begin,
 
 vuchar pack_16(const vuint16::const_iterator t_input_begin,
                const vuint16::const_iterator t_input_end, vuchar &t_res) {
-  std::for_each(t_input_begin, t_input_end, [&](const auto value) {
-    t_res.push_back(static_cast<uchar>(value >> 8 & 0xFFu));
-    t_res.push_back(static_cast<uchar>(value & 0xFFu));
+  std::for_each(t_input_begin, t_input_end, [&t_res](const auto value) {
+    t_res.push_back(static_cast<uchar>(value >> 8 & 0xFFU));
+    t_res.push_back(static_cast<uchar>(value & 0xFFU));
   });
   return t_res;
 }
@@ -159,7 +156,8 @@ vuint16 unpack_n(const ustring::const_iterator t_begin,
     if (current_char >= max_value) { // if it is the mask
       return unpack_n(it + 1, t_end, t_res, t_n + 1);
     }
-    t_res.push_back(current_char &= masks[t_n]);
+    current_char &= masks[t_n];
+    t_res.push_back(current_char);
     if (right_shift == 0) {
       ++it;
     }
