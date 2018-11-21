@@ -16,25 +16,25 @@ using ustring = std::basic_string<uint8_t>; // chaine non encodée
 using uvec = std::vector<uint32_t>;         // chaine encodée
 
 void help() {
-  puts("Usage:");
-  puts("lzw  [-options] [-i path] [-o path]\n");
-  puts("The default action is to compress the input file to a .lzw file");
-  puts("in which the directory in which the software is executed.");
-  puts("Options available:");
-  puts("-h --help");
-  puts("\tdisplay the current message");
-  puts("-i --input");
-  puts("\tpath to the input file (MANDATORY)");
-  puts("-o --output");
-  puts("\tpath to the output file (if the file already exists, it will be\n");
-  puts("\toverwritten). Default: input path + \".lzw\"");
-  puts("-c --compress");
-  puts("\tcompress the input file");
-  puts("-u --uncompress");
-  puts("\tuncompresses the input file to the output file. If no output path");
-  puts("\thas not been entered and if the input file ends with \".lzw\",");
-  puts("\tthe extension \".lzw\" will be removed; otherwise, the extension");
-  puts("\t\"_uncompresed\" will be added");
+  puts("Usage:\n\
+lzw  [-options] [-i path] [-o path]\n\n\
+The default action is to compress the input file to a .lzw file\n\
+in which the directory in which the software is executed.\n\
+Options available:\n\
+-h --help\n\
+\tdisplay the current message\n\
+-i --input\n\
+\tpath to the input file (MANDATORY)\n\
+-o --output\n\
+\tpath to the output file (if the file already exists, it will be\n\n\
+\toverwritten). Default: input path + \".lzw\\n\
+-c --compress\n\
+\tcompress the input file\n\
+-u --uncompress\n\
+\tuncompresses the input file to the output file. If no output path\n\
+\thas not been entered and if the input file ends with \".lzw\",\n\
+\tthe extension \".lzw\" will be removed; otherwise, the extension\n\
+\t\"_uncompresed\" will be added");
 }
 
 std::tuple<string, string, bool> process_args(int t_argc, char *t_argv[]) {
