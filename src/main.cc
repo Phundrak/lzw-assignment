@@ -82,7 +82,10 @@ std::tuple<string, string, bool> process_args(int t_argc, char *t_argv[]) {
 
 int main(int argc, char *argv[]) {
   const auto [input_path, output_path, compressing] = process_args(argc, argv);
-  assert(!input_path.empty());
+  if(input_path.empty()) {
+    help();
+    return 0;
+  }
   if (compressing) {
     compress(input_path, (output_path.empty()) ? nullptr : output_path.c_str());
   } else {
