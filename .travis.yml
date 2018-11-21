@@ -35,12 +35,12 @@ matrix:
 
     # Linux GCC C++17
     - env:
-        - MATRIX_EVAL="BUILD_TYPE=Debug && BIN_DIR=debug && CC=gcc-7 && CXX=g++-7"
+        - MATRIX_EVAL="BUILD_TYPE=debug && BIN_DIR=debug && CC=gcc-7 && CXX=g++-7"
       compiler: gcc
       before_install:
         - eval "${MATRIX_EVAL}"
     - env:
-        - MATRIX_EVAL="BUILD_TYPE=Release && BIN_DIR=bin && CC=gcc-7 && CXX=g++-7"
+        - MATRIX_EVAL="BUILD_TYPE=release && BIN_DIR=bin && CC=gcc-7 && CXX=g++-7"
       compiler: gcc
       before_install:
         - eval "${MATRIX_EVAL}"
