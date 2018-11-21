@@ -23,12 +23,12 @@ matrix:
   include:
     # Linux Clang C++17
     - env:
-        BUILD_TYPE=Debug
+        BUILD_TYPE=debug
         BIN_DIR=debug
         CC=clang-5.0
         CXX=clang++-5.0
     - env:
-        BUILD_TYPE=Release
+        BUILD_TYPE=release
         BIN_DIR=bin
         CC=clang-5.0
         CXX=clang++-5.0
